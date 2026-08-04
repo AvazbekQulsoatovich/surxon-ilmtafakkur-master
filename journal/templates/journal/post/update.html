@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% block title %}{{ post.title }} — {% blocktrans %}tahrirlash{% endblocktrans %}{% endblock %}
+{% block content %}
+<div class="container">
+  <div class="admin-form-card">
+    <div class="admin-form-header">
+      <a href="{% url 'journal:dashboard' %}" class="admin-back-btn"><i class="fa fa-arrow-left"></i></a>
+      <div>
+        <p class="admin-form-label">{% blocktrans %}Yangiliklar{% endblocktrans %}</p>
+        <h2 class="admin-form-title">{% blocktrans %}Yangilikni tahrirlash{% endblocktrans %}</h2>
+      </div>
+    </div>
+    <div class="admin-form-body">
+      <form method="post" enctype="multipart/form-data">{% csrf_token %}{{ form.media }}
+        {% for field in form %}
+        <div class="admin-field">
+          <label class="admin-label">{{ field.label }}{% if field.field.required %} <span class="req">*</span>{% endif %}</label>
+          {% if field.errors %}<p class="admin-error">{{ field.errors|striptags }}</p>{% endif %}
+          {{ field }}
+        </div>
+        {% endfor %}
+        <div class="admin-form-actions">
+          <button type="submit" class="admin-btn-save"><i class="fa fa-check me-2"></i>{% blocktrans %}Saqlash{% endblocktrans %}</button>
+          <a href="{{ post.get_absolute_url }}" class="admin-btn-cancel"><i class="fa fa-eye me-2"></i>{% blocktrans %}Ko'rish{% endblocktrans %}</a>
+          <a href="{% url 'journal:dashboard' %}" class="admin-btn-cancel"><i class="fa fa-xmark me-1"></i>{% blocktrans %}Panel{% endblocktrans %}</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

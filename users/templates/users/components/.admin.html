@@ -1,0 +1,129 @@
+{% load static %}
+{% load i18n %}
+{% load journal_tags %}
+
+<li class="fornow">
+    <a href="{% url 'journal:article_create' %}" class="nav-link" style="color: blue;">
+        <i class="fa-regular text-warning fa-plus fs-3"></i>
+        {% get_current_language as LANGUAGE_CODE %}
+        {% if LANGUAGE_CODE == "uz" %}
+        <span class="span-hover-in-user span-color-in-user" style="font-size: larger">Maqola yozish</span>
+        {% elif LANGUAGE_CODE == "en" %}
+        <span class="span-hover-in-user span-color-in-user" style="font-size: larger">Write an article</span>
+        {% elif LANGUAGE_CODE == "ru" %}
+        <span class="span-hover-in-user span-color-in-user" style="font-size: larger">Написать статью</span>
+        {% endif %}
+    </a>
+</li>
+<li class="fornow">
+    <a href="{% url 'journal:post_create' %}" class="nav-link" style="color: blue;">
+        <i class="fa-regular text-warning fa-plus fs-3"></i>
+        <span class="span-hover-in-user span-color-in-user" style="font-size: larger">
+                        {% blocktrans %}Yangilik qo'shish{% endblocktrans %}
+                    </span>
+    </a>
+</li>
+<li class="fornow">
+    <a href="{% url 'journal:journal_create' %}" class="nav-link" style="color: blue;">
+        <i class="fa-regular text-warning fa-plus fs-3"></i>
+        {% get_current_language as LANGUAGE_CODE %}
+        {% if LANGUAGE_CODE == "uz" %}
+        <span class="span-hover-in-user span-color-in-user" style="font-size: larger">{% blocktrans %}Jurnal qo'shish{% endblocktrans %}</span>
+        {% elif LANGUAGE_CODE == "en" %}
+        <span class="span-hover-in-user span-color-in-user" style="font-size: larger">{% blocktrans %}Add an journal{% endblocktrans %}</span>
+        {% elif LANGUAGE_CODE == "ru" %}
+        <span class="span-hover-in-user span-color-in-user" style="font-size: larger">{% blocktrans %}Добавить журнал{% endblocktrans %}</span>
+        {% endif %}
+    </a>
+</li>
+<li class="fornow">
+    <a href="{% url 'journal:editorial_create' %}" class="nav-link" style="color: blue;">
+        <i class="fa-regular text-warning fa-plus fs-3"></i>
+        {% get_current_language as LANGUAGE_CODE %}
+        {% if LANGUAGE_CODE == "uz" %}
+        <span class="span-hover-in-user span-color-in-user" style="font-size: larger">{% blocktrans %}Tahririyat a'zosi qo'shish{% endblocktrans %}</span>
+        {% elif LANGUAGE_CODE == "en" %}
+        <span class="span-hover-in-user span-color-in-user" style="font-size: larger">{% blocktrans %}Add editorial member{% endblocktrans %}</span>
+        {% elif LANGUAGE_CODE == "ru" %}
+        <span class="span-hover-in-user span-color-in-user" style="font-size: larger">{% blocktrans %}Добавить члена редколлегии{% endblocktrans %}</span>
+        {% endif %}
+    </a>
+</li>
+<li class="fornow">
+    <a href="{% url 'journal:about_article_update' id=1 %}" class="nav-link" style="color: blue;">
+        <i class="fa-regular text-warning fa-plus fs-3"></i>
+        {% get_current_language as LANGUAGE_CODE %}
+        {% if LANGUAGE_CODE == "uz" %}
+        <span class="span-hover-in-user span-color-in-user" style="font-size: larger">{% blocktrans %}Jurnal haqidani o'zgartirish{% endblocktrans %}</span>
+        {% elif LANGUAGE_CODE == "en" %}
+        <span class="span-hover-in-user span-color-in-user" style="font-size: larger">{% blocktrans %}Change the about journal{% endblocktrans %}</span>
+        {% elif LANGUAGE_CODE == "ru" %}
+        <span class="span-hover-in-user span-color-in-user" style="font-size: larger">{% blocktrans %}Изменения в журнале{% endblocktrans %}</span>
+        {% endif %}
+    </a>
+</li>
+<li class="fornow">
+    <a href="{% url 'journal:sending_article_update' id=1 %}" class="nav-link" style="color: blue;">
+        <i class="fa-regular text-warning fa-plus fs-3"></i>
+        {% get_current_language as LANGUAGE_CODE %}
+        {% if LANGUAGE_CODE == "uz" %}
+        <span class="span-hover-in-user span-color-in-user" style="font-size: larger">{% blocktrans %}Ma'qola yuborishni o'zgartirish{% endblocktrans %}</span>
+        {% elif LANGUAGE_CODE == "en" %}
+        <span class="span-hover-in-user span-color-in-user" style="font-size: larger">{% blocktrans %}Change article submission{% endblocktrans %}</span>
+        {% elif LANGUAGE_CODE == "ru" %}
+        <span class="span-hover-in-user span-color-in-user" style="font-size: larger">{% blocktrans %}Изменить отправку статьи{% endblocktrans %}</span>
+        {% endif %}
+    </a>
+</li>
+<li class="fornow">
+    <a href="{% url 'journal:social_media_create' %}" class="nav-link" style="color: blue;">
+        <i class="fa-regular text-warning fa-plus fs-3"></i>
+        {% get_current_language as LANGUAGE_CODE %}
+        {% if LANGUAGE_CODE == "uz" %}
+        <span class="span-hover-in-user span-color-in-user" style="font-size: larger">{% blocktrans %}Ijtimoiy tarmoq qo'shish{% endblocktrans %}</span>
+        {% elif LANGUAGE_CODE == "en" %}
+        <span class="span-hover-in-user span-color-in-user" style="font-size: larger">{% blocktrans %}Add social network{% endblocktrans %}</span>
+        {% elif LANGUAGE_CODE == "ru" %}
+        <span class="span-hover-in-user span-color-in-user" style="font-size: larger">{% blocktrans %}Добавить социальную сеть{% endblocktrans %}</span>
+        {% endif %}
+    </a>
+</li>
+<li class="fornow">
+    <a href="{% url 'journal:social_media_list' %}" class="nav-link" style="color: blue;">
+        <i class="fa-solid text-warning fa-hashtag fs-3"></i>
+        {% get_current_language as LANGUAGE_CODE %}
+        {% if LANGUAGE_CODE == "uz" %}
+        <span class="span-hover-in-user span-color-in-user" style="font-size: larger">{% blocktrans %}Ijtimoiy tarmoqlar{% endblocktrans %}</span>
+        {% elif LANGUAGE_CODE == "en" %}
+        <span class="span-hover-in-user span-color-in-user" style="font-size: larger">{% blocktrans %}Social networks{% endblocktrans %}</span>
+        {% elif LANGUAGE_CODE == "ru" %}
+        <span class="span-hover-in-user span-color-in-user" style="font-size: larger">{% blocktrans %}Социальные сети{% endblocktrans %}</span>
+        {% endif %}
+    </a>
+</li>
+{% get_messages_count as count %}
+<li class="fornow">
+    <a href="{% url 'journal:message_list' %}" class="nav-link" style="color: blue;">
+        <i class="fa-solid text-warning fa-comment-sms fs-3"></i>
+        <span class="span-hover-in-user span-color-in-user" style="font-size: larger">
+                        {% blocktrans %}Xabarlar{% endblocktrans %}
+            {% if count != 0 %}
+            <span class="badge text-bg-primary rounded-pill ms-4">
+                    {{ count }}
+            </span>
+            {% endif %}
+                    </span>
+
+    </a>
+</li>
+
+
+
+
+
+
+
+
+
+
+

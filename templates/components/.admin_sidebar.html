@@ -1,0 +1,254 @@
+{% load i18n %}
+{% if request.user.is_authenticated and request.user.is_superuser or request.user.is_authenticated and request.profile.is_admin %}
+
+<aside class="sb" id="sb">
+
+  <!-- USER -->
+  <div class="sb-user">
+    <div class="sb-avatar">
+      {% if request.user.profile.image %}
+        <img src="{{ request.user.profile.image.url }}" alt="">
+      {% else %}
+        <span>{{ request.user.username|slice:":1"|upper }}</span>
+      {% endif %}
+    </div>
+    <div class="sb-uinfo">
+      <strong class="sb-uname">{{ request.user.username }}</strong>
+      {% if request.user.is_superuser %}
+        <span class="sb-role sb-role--super">
+          <i class="sb-star">★</i> {% trans "Super Admin" %}
+        </span>
+      {% else %}
+        <span class="sb-role sb-role--admin">
+          <i class="sb-dot">●</i> {% trans "Admin" %}
+        </span>
+      {% endif %}
+    </div>
+    <button class="sb-x d-lg-none" onclick="sbClose()">✕</button>
+  </div>
+
+  <!-- NAV -->
+  <nav class="sb-nav">
+
+    <!-- SAHIFALAR -->
+    <div class="sb-grp">
+      <p class="sb-lbl">{% trans "Sahifalar" %}</p>
+
+      <a href="{% url 'journal:main_page' %}" class="sb-a sb-red {% if request.resolver_match.url_name == 'main_page' %}sb-on{% endif %}">
+        <span class="sb-ico">
+          <svg viewBox="0 0 24 24"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H5a1 1 0 01-1-1V9.5z" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linejoin="round"/><path d="M9 21V12h6v9" stroke="currentColor" stroke-width="1.8" fill="none"/></svg>
+        </span>
+        {% trans "Bosh sahifa" %}
+      </a>
+
+      <a href="{% url 'journal:article_list' %}" class="sb-a sb-red {% if 'article/list' in request.path %}sb-on{% endif %}">
+        <span class="sb-ico">
+          <svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2" stroke="currentColor" stroke-width="1.8" fill="none"/><line x1="8" y1="8" x2="16" y2="8" stroke="currentColor" stroke-width="1.6"/><line x1="8" y1="12" x2="16" y2="12" stroke="currentColor" stroke-width="1.6"/><line x1="8" y1="16" x2="12" y2="16" stroke="currentColor" stroke-width="1.6"/></svg>
+        </span>
+        {% trans "Maqolalar" %}
+      </a>
+
+      <a href="{% url 'journal:post_list' %}" class="sb-a sb-red {% if 'post/list' in request.path %}sb-on{% endif %}">
+        <span class="sb-ico">
+          <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" stroke-width="1.8" fill="none"/><line x1="3" y1="9" x2="21" y2="9" stroke="currentColor" stroke-width="1.6"/><line x1="7" y1="14" x2="11" y2="14" stroke="currentColor" stroke-width="1.6"/></svg>
+        </span>
+        {% trans "Yangiliklar" %}
+      </a>
+
+      <a href="{% url 'journal:editorial_list' %}" class="sb-a sb-red {% if 'editorial/list' in request.path %}sb-on{% endif %}">
+        <span class="sb-ico">
+          <svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3" stroke="currentColor" stroke-width="1.8" fill="none"/><circle cx="17" cy="8" r="3" stroke="currentColor" stroke-width="1.8" fill="none"/><path d="M3 20c0-3.3 2.7-6 6-6h3" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"/><path d="M13 20c0-3.3 1.8-5.6 4-6" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg>
+        </span>
+        {% trans "Tahririyat" %}
+      </a>
+
+      <a href="{% url 'journal:journal_list' %}" class="sb-a sb-red {% if 'journal/list' in request.path %}sb-on{% endif %}">
+        <span class="sb-ico">
+          <svg viewBox="0 0 24 24"><path d="M5 3h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2z" stroke="currentColor" stroke-width="1.8" fill="none"/><path d="M8 7h8M8 11h8M8 15h5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        </span>
+        {% trans "Arxiv" %}
+      </a>
+
+      <a href="{% url 'journal:about_journal' %}" class="sb-a sb-red {% if 'journal/about' in request.path and 'update' not in request.path %}sb-on{% endif %}">
+        <span class="sb-ico">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8" fill="none"/><line x1="12" y1="8" x2="12" y2="8.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><line x1="12" y1="11" x2="12" y2="16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        </span>
+        {% trans "Jurnal haqida" %}
+      </a>
+
+      <a href="{% url 'journal:booking_article' %}" class="sb-a sb-red {% if 'booking' in request.path %}sb-on{% endif %}">
+        <span class="sb-ico">
+          <svg viewBox="0 0 24 24"><path d="M14 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-9" stroke="currentColor" stroke-width="1.8" fill="none"/><path d="M17 3l4 4-8 8H9v-4l8-8z" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linejoin="round"/></svg>
+        </span>
+        {% trans "Maqola yuborish" %}
+      </a>
+
+      <a href="{% url 'journal:contact' %}" class="sb-a sb-red {% if 'contact' in request.path %}sb-on{% endif %}">
+        <span class="sb-ico">
+          <svg viewBox="0 0 24 24"><path d="M4 4h16v13H4z" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linejoin="round"/><path d="M4 4l8 9 8-9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        </span>
+        {% trans "Bog'lanish" %}
+      </a>
+
+      <a href="{% url 'journal:nashr_etiketkasi' %}" class="sb-a sb-red {% if 'nashr-etiketkasi' in request.path %}sb-on{% endif %}">
+        <span class="sb-ico">
+          <svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2" stroke="currentColor" stroke-width="1.8" fill="none"/><path d="M7 7V5a5 5 0 0110 0v2" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"/><circle cx="12" cy="13.5" r="1.5" fill="currentColor"/></svg>
+        </span>
+        {% trans "Nashr etiketkasi" %}
+      </a>
+
+      <a href="{% url 'journal:maxfiylik_siyosati' %}" class="sb-a sb-red {% if 'maxfiylik-siyosati' in request.path %}sb-on{% endif %}">
+        <span class="sb-ico">
+          <svg viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 4.5-3 8.5-7 10C5 19.5 5 19.5 5 11V6l7-3z" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+        {% trans "Maxfiylik siyosati" %}
+      </a>
+    </div>
+
+    <!-- BOSHQARUV (faqat super admin) -->
+    {% if request.user.is_superuser %}
+    <div class="sb-grp">
+      <p class="sb-lbl">{% trans "Boshqaruv" %}</p>
+
+      <a href="{% url 'journal:dashboard' %}" class="sb-a sb-yellow {% if 'dashboard' in request.path %}sb-on{% endif %}">
+        <span class="sb-ico">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="8" rx="1.5" stroke="currentColor" stroke-width="1.8" fill="none"/><rect x="13" y="3" width="8" height="8" rx="1.5" stroke="currentColor" stroke-width="1.8" fill="none"/><rect x="3" y="13" width="8" height="8" rx="1.5" stroke="currentColor" stroke-width="1.8" fill="none"/><rect x="13" y="13" width="8" height="8" rx="1.5" stroke="currentColor" stroke-width="1.8" fill="none"/></svg>
+        </span>
+        {% trans "Panel" %}
+        {% if message_count %}<em class="sb-badge">{{ message_count }}</em>{% endif %}
+      </a>
+
+
+      <a href="{% url 'journal:article_create' %}" class="sb-a sb-yellow {% if 'article/create' in request.path %}sb-on{% endif %}">
+        <span class="sb-ico">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8" fill="none"/><line x1="12" y1="8" x2="12" y2="16" stroke="currentColor" stroke-width="2"/><line x1="8" y1="12" x2="16" y2="12" stroke="currentColor" stroke-width="2"/></svg>
+        </span>
+        {% trans "Maqola yozish" %}
+      </a>
+
+      <a href="{% url 'journal:post_create' %}" class="sb-a sb-yellow {% if 'post/create' in request.path %}sb-on{% endif %}">
+        <span class="sb-ico">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8" fill="none"/><line x1="12" y1="8" x2="12" y2="16" stroke="currentColor" stroke-width="2"/><line x1="8" y1="12" x2="16" y2="12" stroke="currentColor" stroke-width="2"/></svg>
+        </span>
+        {% trans "Yangilik qo'shish" %}
+      </a>
+
+      <a href="{% url 'journal:journal_create' %}" class="sb-a sb-yellow {% if 'journal/create' in request.path %}sb-on{% endif %}">
+        <span class="sb-ico">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8" fill="none"/><line x1="12" y1="8" x2="12" y2="16" stroke="currentColor" stroke-width="2"/><line x1="8" y1="12" x2="16" y2="12" stroke="currentColor" stroke-width="2"/></svg>
+        </span>
+        {% trans "Jurnal qo'shish" %}
+      </a>
+
+      <a href="{% url 'journal:year_create' %}" class="sb-a sb-yellow {% if 'year/create' in request.path %}sb-on{% endif %}">
+        <span class="sb-ico">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8" fill="none"/><line x1="12" y1="8" x2="12" y2="16" stroke="currentColor" stroke-width="2"/><line x1="8" y1="12" x2="16" y2="12" stroke="currentColor" stroke-width="2"/></svg>
+        </span>
+        {% trans "Yil qo'shish" %}
+      </a>
+
+      <a href="{% url 'journal:editorial_create' %}" class="sb-a sb-yellow {% if 'editorial/create' in request.path %}sb-on{% endif %}">
+        <span class="sb-ico">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8" fill="none"/><line x1="12" y1="8" x2="12" y2="16" stroke="currentColor" stroke-width="2"/><line x1="8" y1="12" x2="16" y2="12" stroke="currentColor" stroke-width="2"/></svg>
+        </span>
+        {% trans "Tahririyat a'zosi qo'shish" %}
+      </a>
+
+      {% if global_about %}
+      <a href="{% url 'journal:about_article_update' global_about.id %}" class="sb-a sb-yellow">
+        <span class="sb-ico">
+          <svg viewBox="0 0 24 24"><path d="M12 20H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v6" stroke="currentColor" stroke-width="1.8" fill="none"/><path d="M16 18.5l2 .5-.5-2 5-5-1.5-1.5-5 5z" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linejoin="round"/></svg>
+        </span>
+        {% trans "J. haqidani tahrirlash" %}
+      </a>
+      {% endif %}
+      {% if global_sending %}
+      <a href="{% url 'journal:sending_article_update' global_sending.id %}" class="sb-a sb-yellow">
+        <span class="sb-ico">
+          <svg viewBox="0 0 24 24"><path d="M12 20H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v6" stroke="currentColor" stroke-width="1.8" fill="none"/><path d="M16 18.5l2 .5-.5-2 5-5-1.5-1.5-5 5z" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linejoin="round"/></svg>
+        </span>
+        {% trans "M. yuborishni tahrirlash" %}
+      </a>
+      {% endif %}
+
+      <a href="{% url 'journal:social_media_list' %}" class="sb-a sb-yellow {% if 'social' in request.path %}sb-on{% endif %}">
+        <span class="sb-ico">
+          <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="2.5" stroke="currentColor" stroke-width="1.8" fill="none"/><circle cx="18" cy="19" r="2.5" stroke="currentColor" stroke-width="1.8" fill="none"/><circle cx="6" cy="12" r="2.5" stroke="currentColor" stroke-width="1.8" fill="none"/><line x1="8.4" y1="10.8" x2="15.6" y2="6.2" stroke="currentColor" stroke-width="1.6"/><line x1="8.4" y1="13.2" x2="15.6" y2="17.8" stroke="currentColor" stroke-width="1.6"/></svg>
+        </span>
+        {% trans "Ijtimoiy tarmoqlar" %}
+      </a>
+
+      <a href="{% url 'journal:sitepage_update' 'nashr' %}" class="sb-a sb-yellow {% if 'sitepage/update/nashr' in request.path %}sb-on{% endif %}">
+        <span class="sb-ico">
+          <svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2" stroke="currentColor" stroke-width="1.8" fill="none"/><path d="M7 7V5a5 5 0 0110 0v2" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"/><path d="M14 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-9" stroke="currentColor" stroke-width="1.8" fill="none"/><path d="M17 3l4 4-8 8H9v-4l8-8z" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linejoin="round"/></svg>
+        </span>
+        {% trans "Nashr etiketkasi" %}
+      </a>
+
+      <a href="{% url 'journal:sitepage_update' 'maxfiylik' %}" class="sb-a sb-yellow {% if 'sitepage/update/maxfiylik' in request.path %}sb-on{% endif %}">
+        <span class="sb-ico">
+          <svg viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 4.5-3 8.5-7 10C5 19.5 5 19.5 5 11V6l7-3z" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linejoin="round"/><path d="M14 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-9" stroke="currentColor" stroke-width="1.8" fill="none"/><path d="M17 3l4 4-8 8H9v-4l8-8z" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linejoin="round"/></svg>
+        </span>
+        {% trans "Maxfiylik siyosati" %}
+      </a>
+
+      <a href="{% url 'journal:message_list' %}" class="sb-a sb-yellow {% if 'message' in request.path %}sb-on{% endif %}">
+        <span class="sb-ico">
+          <svg viewBox="0 0 24 24"><path d="M4 4h16v13H4z" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linejoin="round"/><path d="M4 4l8 8 8-8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        </span>
+        {% trans "Xabarlar" %}
+        {% if message_count %}<em class="sb-badge">{{ message_count }}</em>{% endif %}
+      </a>
+    </div>
+    {% endif %}
+
+
+    <!-- HISOB -->
+    <div class="sb-grp sb-grp--bottom">
+      <p class="sb-lbl">{% trans "Hisob" %}</p>
+
+      <a href="{% url 'users:profile_update' %}" class="sb-a sb-red {% if 'profile/update' in request.path %}sb-on{% endif %}">
+        <span class="sb-ico">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.8" fill="none"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg>
+        </span>
+        {% trans "Profilni tahrirlash" %}
+      </a>
+
+      <a href="{% url 'users:password_change' %}" class="sb-a sb-red {% if 'password-change' in request.path %}sb-on{% endif %}">
+        <span class="sb-ico">
+          <svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.8" fill="none"/><path d="M8 11V7a4 4 0 018 0v4" stroke="currentColor" stroke-width="1.8" fill="none"/><circle cx="12" cy="16" r="1.5" fill="currentColor"/></svg>
+        </span>
+        {% trans "Parolni almashtirish" %}
+      </a>
+
+      <a href="{% url 'users:logout' %}" class="sb-a sb-red sb-a--exit">
+        <span class="sb-ico">
+          <svg viewBox="0 0 24 24"><path d="M16 17l5-5-5-5M21 12H9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" stroke="currentColor" stroke-width="1.8" fill="none"/></svg>
+        </span>
+        {% trans "Chiqish" %}
+      </a>
+    </div>
+
+  </nav>
+</aside>
+
+<div class="sb-overlay" id="sb-ovl" onclick="sbClose()"></div>
+<button class="sb-fab d-lg-none" id="sb-fab" onclick="sbOpen()">
+  <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+    <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="15" y2="18"/>
+  </svg>
+</button>
+
+<script>
+function sbOpen(){
+  document.getElementById('sb').classList.add('sb--open');
+  document.getElementById('sb-ovl').classList.add('sb-overlay--show');
+  document.getElementById('sb-fab').style.display='none';
+}
+function sbClose(){
+  document.getElementById('sb').classList.remove('sb--open');
+  document.getElementById('sb-ovl').classList.remove('sb-overlay--show');
+  document.getElementById('sb-fab').style.display='';
+}
+</script>
+{% endif %}

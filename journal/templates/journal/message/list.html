@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% block title %}{% blocktrans %}Xabarlar{% endblocktrans %}{% endblock %}
+{% block content %}
+<div class="container">
+
+  <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; margin-bottom:24px;">
+    <h2 class="section-title mb-0">
+      <i class="fa fa-envelope me-2" style="color:var(--accent);"></i>
+      {% blocktrans %}Xabarlar{% endblocktrans %}
+      <span style="font-size:0.85rem; font-weight:400; color:var(--text-muted); margin-left:8px;">({{ messages_count }})</span>
+    </h2>
+    <div class="d-flex gap-2">
+      {% if messages_count > 0 %}
+      <form action="{% url 'journal:message_delete_all' %}" method="post">{% csrf_token %}
+        <button type="submit" class="admin-btn-delete-confirm" style="padding:8px 18px; font-size:0.85rem;">
+          <i class="fa fa-trash me-2"></i>{% blocktrans %}Barchasini o'chirish{% endblocktrans %}
+        </button>
+      </form>
+      {% endif %}
+      <a href="{% url 'journal:dashboard' %}" class="admin-btn-cancel" style="padding:8px 18px; font-size:0.85rem;">
+        <i class="fa fa-arrow-left me-2"></i>{% blocktrans %}Panelga qaytish{% endblocktrans %}
+      </a>
+    </div>
+  </div>
+
+  {% for message in messages %}
+  <div class="article-detail-card mb-3">
+    <div class="article-detail-header" style="padding:16px 24px 14px;">
+      <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px;">
+        <div style="display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
+          <span style="font-size:0.82rem; color:rgba(255,255,255,0.75);">
+            <i class="fa fa-user me-1"></i><strong style="color:#fff;">{{ message.sender.username }}</strong>
+          </span>
+          {% if message.sender.profile.telephone %}
+          <span style="font-size:0.82rem; color:rgba(255,255,255,0.7);">
+            <i class="fa fa-phone me-1"></i>{{ message.sender.profile.telephone }}
+          </span>
+          {% endif %}
+          {% if message.sender.email %}
+          <span style="font-size:0.82rem; color:rgba(255,255,255,0.7);">
+            <i class="fa fa-envelope me-1"></i>{{ message.sender.email }}
+          </span>
+          {% endif %}
+        </div>
+        {% if message.is_read %}
+        <span style="font-size:0.72rem; background:rgba(39,174,96,0.2); color:#a8e6c7; padding:3px 10px; border-radius:20px; border:1px solid rgba(39,174,96,0.3);">
+          <i class="fa fa-check me-1"></i>{% blocktrans %}O'qilgan{% endblocktrans %}
+        </span>
+        {% else %}
+        <span style="font-size:0.72rem; background:rgba(231,76,60,0.2); color:#f5b7b1; padding:3px 10px; border-radius:20px; border:1px solid rgba(231,76,60,0.3);">
+          <i class="fa fa-circle me-1"></i>{% blocktrans %}Yangi{% endblocktrans %}
+        </span>
+        {% endif %}
+      </div>
+    </div>
+    <div class="article-detail-body" style="padding:18px 24px 16px;">
+      <p style="margin:0; font-size:0.95rem; line-height:1.7; color:#2a2a2a;">{{ message.message }}</p>
+    </div>
+    <div class="article-detail-meta" style="padding:10px 24px;">
+      <div class="meta-item">
+        <i class="fa fa-clock"></i>
+        <span>{{ message.created_at|timesince }} {% blocktrans %}oldin{% endblocktrans %}</span>
+      </div>
+    </div>
+  </div>
+  {% empty %}
+  <div class="empty-state">
+    <i class="fa fa-envelope-open d-block mb-3"></i>
+    <p class="mb-0">{% blocktrans %}Hozircha xabarlar mavjud emas.{% endblocktrans %}</p>
+  </div>
+  {% endfor %}
+
+  {% include 'journal/includes/pagination.html' with page=messages %}
+</div>
+{% endblock %}

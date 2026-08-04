@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% blocktrans %}Tahririyat{% endblocktrans %}{% endblock %}
+
+{% block content %}
+<div class="container">
+
+    <h2 class="section-title">
+        <i class="fa fa-people-group me-2" style="color:var(--accent); font-size:1.1rem;"></i>
+        {% blocktrans %}Tahririyat a'zolari{% endblocktrans %}
+    </h2>
+
+    <div class="row g-4">
+        {% for editorial in editorials %}
+        <div class="col-sm-6 col-lg-4 col-xl-3">
+            <div class="editorial-card">
+                <div class="editorial-card-photo">
+                    {% if editorial.image %}
+                    <img src="{{ editorial.image.url }}" alt="tahrirchi">
+                    {% else %}
+                    <div class="editorial-card-avatar">
+                        <i class="fa fa-user"></i>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="editorial-card-body text-center mt-3">
+                    <h5 class="fw-bold mb-1" style="color: var(--primary);">{{ editorial.first_name }} {{ editorial.last_name }}</h5>
+                    <p class="text-muted small mb-2"><i class="fa-solid fa-briefcase me-1" style="color: var(--accent);"></i>{{ editorial.position }}</p>
+                    {% if editorial.phone_number %}
+                    <p class="text-muted small mb-0"><i class="fa-solid fa-phone me-1" style="color: var(--accent);"></i>{{ editorial.phone_number }}</p>
+                    {% endif %}
+                </div>
+                {% if request.user.is_superuser %}
+                <div class="editorial-card-actions">
+                    <a href="{{ editorial.get_update_url }}" class="btn-action btn-edit" style="font-size:0.78rem; padding:5px 12px;">
+                        <i class="fa fa-pen"></i> {% blocktrans %}Tahrirlash{% endblocktrans %}
+                    </a>
+                    <a href="{{ editorial.get_delete_url }}" class="btn-action btn-delete" style="font-size:0.78rem; padding:5px 12px;">
+                        <i class="fa fa-trash"></i> {% blocktrans %}O'chirish{% endblocktrans %}
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="empty-state">
+                <i class="fa fa-users-slash d-block mb-3"></i>
+                <p class="mb-0">{% blocktrans %}Bu yerda hali Tahrir a'zolari mavjud emas.{% endblocktrans %}</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="mt-4">
+        {% include 'journal/includes/pagination.html' with page=editorials %}
+    </div>
+</div>
+{% endblock %}

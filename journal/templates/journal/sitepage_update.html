@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}
+    {% if page_type == 'nashr' %}
+        Nashr etiketkasini tahrirlash
+    {% else %}
+        Maxfiylik siyosatini tahrirlash
+    {% endif %}
+{% endblock title %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col-12 d-flex align-items-center justify-content-between">
+            <h2 class="section-title mb-0">
+                <i class="fa {% if page_type == 'nashr' %}fa-stamp{% else %}fa-shield-halved{% endif %} me-2"
+                   style="color:var(--accent); font-size:1.1rem;"></i>
+                {% if page_type == 'nashr' %}
+                    Nashr etiketkasini tahrirlash
+                {% else %}
+                    Maxfiylik siyosatini tahrirlash
+                {% endif %}
+            </h2>
+            <a href="{% if page_type == 'nashr' %}{% url 'journal:nashr_etiketkasi' %}{% else %}{% url 'journal:maxfiylik_siyosati' %}{% endif %}"
+               class="btn btn-sm btn-outline-secondary">
+                <i class="fa fa-arrow-left me-1"></i> Ortga
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="article-detail-card">
+                <div class="article-detail-header">
+                    <h5 class="mb-0" style="color:#fff; font-weight:700;">
+                        <i class="fa fa-pen me-2" style="color:var(--accent);"></i>
+                        Sahifa kontentini tahrirlang
+                    </h5>
+                </div>
+                <div class="article-detail-body">
+                    <form method="post">
+                        {% csrf_token %}
+
+                        {% for field in form %}
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold" style="color: rgba(255,255,255,0.8);">
+                                {{ field.label }}
+                            </label>
+                            {{ field }}
+                            {% if field.errors %}
+                                <div class="text-danger small mt-1">{{ field.errors }}</div>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+
+                        <div class="d-flex gap-3 mt-4">
+                            <button type="submit" class="btn btn-success px-4">
+                                <i class="fa fa-save me-2"></i>Saqlash
+                            </button>
+                            <a href="{% if page_type == 'nashr' %}{% url 'journal:nashr_etiketkasi' %}{% else %}{% url 'journal:maxfiylik_siyosati' %}{% endif %}"
+                               class="btn btn-outline-secondary px-4">
+                                <i class="fa fa-times me-2"></i>Bekor qilish
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

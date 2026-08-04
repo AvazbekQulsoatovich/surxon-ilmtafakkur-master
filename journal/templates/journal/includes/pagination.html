@@ -1,0 +1,63 @@
+{% load journal_tags %}
+{% load i18n %}
+
+<nav aria-label="...">
+    {% if page.has_other_pages %}
+
+    <ul class="pagination">
+
+        <li class="page-item {% if not page.has_previous %} disabled {% endif %}">
+            <a class="page-link" href="?page={% if page.has_previous %} {{ page.previous_page_number }} {% endif %}">{% blocktrans %}Oldingi{% endblocktrans %}</a>
+        </li>
+
+
+        {% if page.number > 4 %}
+        <li class="page-item">
+            <a class="page-link" href="?page=1">1</a>
+        </li>
+        <li class="page-item">
+            <a class="page-link">...</a>
+        </li>
+        {% endif %}
+
+        {% with page.paginator.num_pages as total %}
+        {% for number in page.paginator.page_range %}
+
+        {% if number == page.number %}
+        <li class="page-item active" aria-current="page">
+            <a class="page-link" href="?page={{ page.number }}">{{ page.number }}</a>
+        </li>
+        {{ continue }}
+        {% endif %}
+
+        {% if number|minus:page.number >= 3 %}
+        {{ continue }}
+        {% elif number != page.number %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ number }}">{{ number }}</a>
+        </li>
+        {% endif %}
+
+        {% endfor %}
+
+
+        {% if total|minus:page.number > 3 %}
+        <li class="page-item">
+            <a class="page-link">...</a>
+        </li>
+        <li class="page-item">
+            <a class="page-link" href="?page={{ total }}">{{ total }}</a>
+        </li>
+        {% endif %}
+        {% endwith %}
+
+
+        <li class="page-item {% if not page.has_next %} disabled {% endif %}">
+            <a class="page-link" href="?page={% if page.has_next %} {{ page.next_page_number }} {% endif %}">{% blocktrans %}Keyingi{% endblocktrans %}</a>
+        </li>
+
+    </ul>
+    {% endif %}
+
+</nav>
+

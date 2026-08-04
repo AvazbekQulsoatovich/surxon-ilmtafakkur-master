@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% blocktrans %}Nashr etiketkasi{% endblocktrans %}{% endblock %}
+
+{% block content %}
+<div class="container">
+
+    <div class="row mb-4">
+        <div class="col-12 d-flex align-items-center justify-content-between flex-wrap gap-2">
+            <h2 class="section-title mb-0">
+                <i class="fa fa-stamp me-2" style="color:var(--accent); font-size:1.1rem;"></i>
+                {% blocktrans %}Nashr etiketkasi{% endblocktrans %}
+            </h2>
+            {% if is_admin %}
+            <a href="{% url 'journal:sitepage_update' 'nashr' %}"
+               class="btn btn-sm btn-warning">
+                <i class="fa fa-pen me-1"></i> Tahrirlash
+            </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="article-detail-card">
+                <div class="article-detail-header">
+                    <h1 class="article-detail-title" style="font-size:1.3rem;">
+                        {% blocktrans %}Nashr ma'lumotlari{% endblocktrans %}
+                    </h1>
+                </div>
+                <div class="article-detail-body">
+
+                    {% if page and page.content %}
+                        {{ page.content|safe }}
+                    {% else %}
+                    <h5 class="mb-2 mt-3">{% blocktrans %}Nashriyot nomi{% endblocktrans %}</h5>
+                    <p>{% blocktrans %}Surxondaryo: Ilm va Tafakkur ilmiy jurnali{% endblocktrans %}</p>
+
+                    <h5 class="mb-2 mt-4">{% blocktrans %}Manzil{% endblocktrans %}</h5>
+                    <p>
+                        {% blocktrans %}O'zbekiston Respublikasi, Surxondaryo viloyati, Termiz shahri{% endblocktrans %}
+                    </p>
+
+                    <h5 class="mb-2 mt-4">{% blocktrans %}Muassaslar{% endblocktrans %}</h5>
+                    <p>{% blocktrans %}Surxondaryo viloyat hokimligi va oliy ta'lim muassasalari{% endblocktrans %}</p>
+
+                    <h5 class="mb-2 mt-4">{% blocktrans %}Bosh muharrir{% endblocktrans %}</h5>
+                    <p>{% blocktrans %}Tahririyat hay'ati{% endblocktrans %}</p>
+
+                    <h5 class="mb-2 mt-4">{% blocktrans %}Ro'yxatga olish raqami{% endblocktrans %}</h5>
+                    <p>{% blocktrans %}O'zbekiston Respublikasi Matbuot va axborot agentligi tomonidan ro'yxatdan o'tkazilgan{% endblocktrans %}</p>
+
+                    <h5 class="mb-2 mt-4">{% blocktrans %}Chiqish davriyligi{% endblocktrans %}</h5>
+                    <p>{% blocktrans %}Yiliga 4 marta (choraklik){% endblocktrans %}</p>
+
+                    <h5 class="mb-2 mt-4">{% blocktrans %}Elektron manzil{% endblocktrans %}</h5>
+                    <p>
+                        <a href="mailto:info@surxon-ilmtafakkur.uz" style="color:var(--accent);">
+                            info@surxon-ilmtafakkur.uz
+                        </a>
+                    </p>
+
+                    <h5 class="mb-2 mt-4">{% blocktrans %}Veb-sayt{% endblocktrans %}</h5>
+                    <p>
+                        <a href="https://surxon-ilmtafakkur.uz" style="color:var(--accent);" target="_blank">
+                            https://surxon-ilmtafakkur.uz
+                        </a>
+                    </p>
+
+                    <div class="mt-4 p-3" style="background: rgba(var(--accent-rgb, 100,180,100), 0.08); border-left: 3px solid var(--accent); border-radius: 4px;">
+                        <small style="color: #888;">
+                            {% blocktrans %}Ushbu jurnal O'zbekiston Respublikasining amaldagi qonunchiligiga muvofiq nashr etiladi. Barcha huquqlar himoyalangan.{% endblocktrans %}
+                        </small>
+                    </div>
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="article-detail-card">
+                <div class="article-detail-header" style="padding:20px 24px 16px;">
+                    <h5 class="mb-0" style="font-size:1rem; color:#fff; font-weight:700;">
+                        {% blocktrans %}Murojaat uchun{% endblocktrans %}
+                    </h5>
+                </div>
+                <div style="padding:20px 24px;">
+                    <p style="font-size:0.9rem;">
+                        <i class="fa fa-envelope me-2" style="color:var(--accent);"></i>
+                        <a href="mailto:info@surxon-ilmtafakkur.uz" style="color:var(--accent);">
+                            info@surxon-ilmtafakkur.uz
+                        </a>
+                    </p>
+                    <p style="font-size:0.9rem;">
+                        <i class="fa fa-globe me-2" style="color:var(--accent);"></i>
+                        <a href="https://surxon-ilmtafakkur.uz" style="color:var(--accent);" target="_blank">
+                            surxon-ilmtafakkur.uz
+                        </a>
+                    </p>
+                    <hr style="border-color: rgba(255,255,255,0.1);">
+                    <a href="{% url 'journal:contact' %}" class="btn-read-more d-block text-center">
+                        <i class="fa fa-paper-plane me-1" style="font-size:0.8rem;"></i>
+                        {% blocktrans %}Biz bilan bog'laning{% endblocktrans %}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock content %}

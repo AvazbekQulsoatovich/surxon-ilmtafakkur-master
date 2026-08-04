@@ -1,0 +1,58 @@
+{% load static %}
+{% load i18n %}
+
+<li class="nav-item fornow">
+    <a class="nav-link active" href="{% url 'journal:main_page' %}">
+        <i style="color: red" class="fa-solid fa-house fs-4"></i>
+        <span class="span-color-always2" style="color: red">{% trans "Asosiy" %}</span>
+    </a>
+</li>
+<li class="nav-item fornow">
+    <a class="nav-link active" href="{% url 'journal:post_list' %}">
+        <i class="fa-regular fa-newspaper fs-4" style="color: red"></i>
+        <span class="span-color-always2" style="color: red">{% trans "Yangiliklar" %}</span>
+    </a>
+</li>
+<li class="nav-item fornow">
+    <a class="nav-link active" href="{% url 'journal:article_list' %}">
+        <i style="color: red" class="fa-solid fa-book-journal-whills fs-4"></i>
+        <span class="span-color-always2" style="color: red">{% trans "Maqolalar" %}</span>
+    </a>
+</li>
+<li class="nav-item fornow">
+    <a class="nav-link active" href="{% url 'journal:contact' %}">
+        <i style="color: red" class="fa-regular fa-address-book fs-4"></i>
+        <span class="span-color-always2" style="color: red">{% trans "Bog'lanish" %}</span>
+    </a>
+</li>
+<li class="nav-item fornow">
+    <a class="nav-link active" href="{% url 'journal:journal_list' %}">
+        <i style="color: red" class="fa-regular fa-folder-open fs-4"></i>
+        <span class="span-color-always2" style="color: red">{% trans "Arxiv" %}</span>
+    </a>
+</li>
+<li class="nav-item fornow">
+    <a class="nav-link active" href="{% url 'journal:about_journal' %}">
+        <i style="color: red" class="fa-solid fa-circle-info fs-4"></i>
+        <span class="span-color-always2" style="color: red">{% trans "Jurnal haqida" %}</span>
+    </a>
+</li>
+<li class="nav-item fornow">
+    <a class="nav-link active" href="{% url 'journal:booking_article' %}">
+        <i style="color: red" class="fa-regular fa-pen-to-square fs-4"></i>
+        <span class="span-color-always2" style="color: red">{% trans "Maqola yuborish" %}</span>
+    </a>
+</li>
+<li class="nav-item fornow">
+    <a class="nav-link active" href="{% url 'journal:nashr_etiketkasi' %}">
+        <i style="color: red" class="fa-solid fa-scroll fs-4"></i>
+        <span class="span-color-always2" style="color: red">{% trans "Nashr etiketkasi" %}</span>
+    </a>
+</li>
+<li class="nav-item fornow">
+    <a class="nav-link active" href="{% url 'journal:maxfiylik_siyosati' %}">
+        <i style="color: red" class="fa-solid fa-shield-alt fs-4"></i>
+        <span class="span-color-always2" style="color: red">{% trans "Maxfiylik siyosati" %}</span>
+    </a>
+</li>
+

@@ -1,0 +1,461 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Boshqaruv paneli" %}{% endblock %}
+
+{% block style %}
+<style>
+/* ── Dashboard (sidebar global, content full-width) ── */
+.dash-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 28px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid var(--border);
+}
+.dash-title {
+    font-family: 'Georgia', serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--primary);
+    margin: 0;
+}
+.dash-subtitle { font-size: 0.85rem; color: var(--text-muted); margin: 4px 0 0; }
+
+/* Stats */
+.dash-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 14px;
+    margin-bottom: 36px;
+}
+.stat-card {
+    border-radius: 12px;
+    padding: 20px 18px 16px;
+    color: #fff;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: -20px; right: -20px;
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.08);
+}
+.stat-card.blue  { background: linear-gradient(135deg,var(--primary) 0%,var(--primary-light) 100%); }
+.stat-card.green { background: linear-gradient(135deg,#1a7a4a 0%,#27ae60 100%); }
+.stat-card.gold  { background: linear-gradient(135deg,#a07020 0%,var(--accent) 100%); }
+.stat-card.dark  { background: linear-gradient(135deg,#2c2c4a 0%,#3a3a6c 100%); }
+.stat-card.red   { background: linear-gradient(135deg,#8b1a1a 0%,#c0392b 100%); }
+.stat-card.purple{ background: linear-gradient(135deg,#4a1a7a 0%,#7b4fa6 100%); }
+.stat-number { font-size: 2rem; font-weight: 800; line-height: 1; letter-spacing: -1px; }
+.stat-icon   { font-size: 1.2rem; opacity: 0.7; margin-bottom: 4px; }
+.stat-label  { font-size: 0.72rem; opacity: 0.85; margin-top: 6px; letter-spacing: 0.3px; }
+
+/* Section tabs (anchor nav) */
+.dash-tabs {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+    background: var(--bg-light);
+    border-radius: 10px;
+    padding: 6px;
+}
+.dash-tab {
+    flex: 1;
+    min-width: 100px;
+    text-align: center;
+    padding: 8px 12px;
+    border-radius: 7px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: background 0.15s, color 0.15s;
+    white-space: nowrap;
+}
+.dash-tab:hover { background: #fff; color: var(--primary); text-decoration: none; }
+.dash-tab.active { background: var(--primary); color: #fff; }
+
+/* Section */
+.dash-section { margin-bottom: 40px; scroll-margin-top: 20px; }
+.dash-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--accent);
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.dash-section-title {
+    font-family: 'Georgia', serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--primary);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.btn-dash-add {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    background: var(--primary);
+    color: #fff;
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 0;
+    height: 40px;
+    width: 140px;
+    box-sizing: border-box;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: background 0.15s;
+}
+.btn-dash-add:hover { background: var(--primary-light); color: #fff; text-decoration: none; }
+.btn-dash-add.green { background: var(--secondary); }
+.btn-dash-add.green:hover { background: #1a7a4a; }
+
+/* Table */
+.dash-card { background: #fff; border-radius: 10px; box-shadow: var(--shadow); overflow: hidden; }
+.dash-table { width: 100%; border-collapse: collapse; font-size: 0.87rem; }
+.dash-table th {
+    background: var(--bg-light);
+    color: var(--primary);
+    font-weight: 700;
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    padding: 10px 14px;
+    text-align: left;
+    border-bottom: 2px solid var(--border);
+}
+.dash-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid #f0f2f5;
+    color: #333;
+    vertical-align: middle;
+}
+.dash-table tr:last-child td { border-bottom: none; }
+.dash-table tr:hover td { background: #fafbfd; }
+.dash-table .empty-row td {
+    text-align: center;
+    color: var(--text-muted);
+    padding: 24px;
+    font-style: italic;
+}
+
+/* Role badge */
+.role-badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 20px; font-size: 0.72rem; font-weight: 700; }
+.role-super { background: rgba(200,168,75,0.15); color: #7a5c1e; border: 1px solid var(--accent); }
+.role-admin { background: rgba(27,58,107,0.12); color: var(--primary); border: 1px solid rgba(27,58,107,0.25); }
+.role-user  { background: #f0f2f5; color: #666; border: 1px solid #ddd; }
+
+/* Responsive */
+@media (max-width: 767px) {
+    .dash-stats { grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .stat-number { font-size: 1.5rem; }
+    .dash-table th, .dash-table td { padding: 8px 10px; font-size: 0.82rem; }
+}
+@media (max-width: 480px) {
+    .dash-stats { grid-template-columns: repeat(2, 1fr); }
+    .dash-tabs { display: none; }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+
+  <!-- Header -->
+  <div class="dash-header">
+    <div>
+      <h1 class="dash-title"><i class="fa fa-gauge-high me-2" style="color:var(--accent); font-size:1.3rem;"></i>{% trans "Boshqaruv paneli" %}</h1>
+      <p class="dash-subtitle">{{ request.user.get_full_name|default:request.user.username }} · {{ request.user.email }}</p>
+    </div>
+    {% if is_super %}
+    <span class="role-badge role-super" style="font-size:0.82rem; padding:5px 14px;"><i class="fa fa-crown"></i> Super Admin</span>
+    {% else %}
+    <span class="role-badge role-admin" style="font-size:0.82rem; padding:5px 14px;"><i class="fa fa-shield-halved"></i> Admin</span>
+    {% endif %}
+  </div>
+
+  <!-- Stats -->
+  <div class="dash-stats">
+    <div class="stat-card blue">
+      <div class="stat-icon"><i class="fa fa-file-alt"></i></div>
+      <div class="stat-number">{{ article_count }}</div>
+      <div class="stat-label">{% trans "Maqolalar" %}</div>
+    </div>
+    <div class="stat-card green">
+      <div class="stat-icon"><i class="fa fa-newspaper"></i></div>
+      <div class="stat-number">{{ post_count }}</div>
+      <div class="stat-label">{% trans "Yangiliklar" %}</div>
+    </div>
+    <div class="stat-card gold">
+      <div class="stat-icon"><i class="fa fa-people-group"></i></div>
+      <div class="stat-number">{{ editorial_count }}</div>
+      <div class="stat-label">{% trans "Tahririyat" %}</div>
+    </div>
+    <div class="stat-card dark">
+      <div class="stat-icon"><i class="fa fa-box-archive"></i></div>
+      <div class="stat-number">{{ journal_count }}</div>
+      <div class="stat-label">{% trans "Arxiv" %}</div>
+    </div>
+    <div class="stat-card purple">
+      <div class="stat-icon"><i class="fa fa-envelope"></i></div>
+      <div class="stat-number">{{ message_count }}</div>
+      <div class="stat-label">{% trans "Yangi xabar" %}</div>
+    </div>
+    {% if is_super %}
+    <div class="stat-card red">
+      <div class="stat-icon"><i class="fa fa-users"></i></div>
+      <div class="stat-number">{{ user_count }}</div>
+      <div class="stat-label">{% trans "Foydalanuvchi" %}</div>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- Section tabs -->
+  <div class="dash-tabs">
+    <a href="#articles" class="dash-tab active" onclick="setTab(this)"><i class="fa fa-file-alt me-1"></i>{% trans "Maqolalar" %}</a>
+    <a href="#posts"    class="dash-tab"        onclick="setTab(this)"><i class="fa fa-newspaper me-1"></i>{% trans "Yangiliklar" %}</a>
+    <a href="#editorial" class="dash-tab"       onclick="setTab(this)"><i class="fa fa-people-group me-1"></i>{% trans "Tahririyat" %}</a>
+    <a href="#journals" class="dash-tab"        onclick="setTab(this)"><i class="fa fa-box-archive me-1"></i>{% trans "Arxiv" %}</a>
+    <a href="#messages" class="dash-tab"        onclick="setTab(this)"><i class="fa fa-envelope me-1"></i>{% trans "Xabarlar" %}{% if message_count %} <span style="background:#e74c3c;color:#fff;border-radius:10px;padding:1px 6px;font-size:0.7rem;margin-left:2px;">{{ message_count }}</span>{% endif %}</a>
+    {% if is_super %}<a href="#users" class="dash-tab" onclick="setTab(this)"><i class="fa fa-users me-1"></i>{% trans "Foydalanuvchilar" %}</a>{% endif %}
+  </div>
+
+  <!-- ── Maqolalar ── -->
+  <div class="dash-section" id="articles">
+    <div class="dash-section-header">
+      <h2 class="dash-section-title"><i class="fa fa-file-alt" style="color:var(--accent);"></i>{% trans "Maqolalar" %}</h2>
+      <a href="{% url 'journal:article_create' %}" class="btn-dash-add"><i class="fa fa-plus"></i>{% trans "Qo'shish" %}</a>
+    </div>
+    <div class="dash-card">
+      <table class="dash-table">
+        <thead><tr>
+          <th>#</th><th>{% trans "Sarlavha" %}</th>
+          <th>{% trans "Ko'rishlar" %}</th>
+          <th>{% trans "Sana" %}</th>
+          <th>{% trans "Amallar" %}</th>
+        </tr></thead>
+        <tbody>
+        {% for a in articles %}
+        <tr>
+          <td style="color:var(--text-muted); width:36px;">{{ forloop.counter }}</td>
+          <td><a href="{{ a.get_absolute_url }}" style="color:var(--primary); text-decoration:none; font-weight:600;">{{ a.title|truncatechars:55 }}</a></td>
+          <td><i class="fa fa-eye" style="color:var(--accent); font-size:0.8rem;"></i> {{ a.views }}</td>
+          <td style="color:var(--text-muted); font-size:0.8rem; white-space:nowrap;">{{ a.created_at|date:"d.m.Y" }}</td>
+          <td style="white-space:nowrap;">
+            <a href="{{ a.get_update_url }}" class="btn-action btn-edit" style="font-size:0.72rem; padding:4px 10px;"><i class="fa fa-pen"></i></a>
+            <a href="{{ a.get_delete_url }}" class="btn-action btn-delete" style="font-size:0.72rem; padding:4px 10px; margin-left:4px;"><i class="fa fa-trash"></i></a>
+          </td>
+        </tr>
+        {% empty %}<tr class="empty-row"><td colspan="5">{% trans "Maqolalar mavjud emas" %}</td></tr>{% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% if article_count > 8 %}<a href="{% url 'journal:article_list' %}" style="font-size:0.82rem;color:var(--primary);display:block;margin-top:10px;text-align:right;">{% trans "Barchasini ko'rish" %} →</a>{% endif %}
+  </div>
+
+  <!-- ── Yangiliklar ── -->
+  <div class="dash-section" id="posts">
+    <div class="dash-section-header">
+      <h2 class="dash-section-title"><i class="fa fa-newspaper" style="color:var(--accent);"></i>{% trans "Yangiliklar" %}</h2>
+      <a href="{% url 'journal:post_create' %}" class="btn-dash-add"><i class="fa fa-plus"></i>{% trans "Qo'shish" %}</a>
+    </div>
+    <div class="dash-card">
+      <table class="dash-table">
+        <thead><tr>
+          <th>#</th><th>{% trans "Sarlavha" %}</th>
+          <th>{% trans "Ko'rishlar" %}</th>
+          <th>{% trans "Sana" %}</th>
+          <th>{% trans "Amallar" %}</th>
+        </tr></thead>
+        <tbody>
+        {% for p in posts %}
+        <tr>
+          <td style="color:var(--text-muted); width:36px;">{{ forloop.counter }}</td>
+          <td><a href="{{ p.get_absolute_url }}" style="color:var(--primary); text-decoration:none; font-weight:600;">{{ p.title|truncatechars:55 }}</a></td>
+          <td><i class="fa fa-eye" style="color:var(--accent); font-size:0.8rem;"></i> {{ p.views }}</td>
+          <td style="color:var(--text-muted); font-size:0.8rem; white-space:nowrap;">{{ p.created_at|date:"d.m.Y" }}</td>
+          <td style="white-space:nowrap;">
+            <a href="{{ p.get_update_url }}" class="btn-action btn-edit" style="font-size:0.72rem; padding:4px 10px;"><i class="fa fa-pen"></i></a>
+            <a href="{{ p.get_delete_url }}" class="btn-action btn-delete" style="font-size:0.72rem; padding:4px 10px; margin-left:4px;"><i class="fa fa-trash"></i></a>
+          </td>
+        </tr>
+        {% empty %}<tr class="empty-row"><td colspan="5">{% trans "Yangiliklar mavjud emas" %}</td></tr>{% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% if post_count > 8 %}<a href="{% url 'journal:post_list' %}" style="font-size:0.82rem;color:var(--primary);display:block;margin-top:10px;text-align:right;">{% trans "Barchasini ko'rish" %} →</a>{% endif %}
+  </div>
+
+  <!-- ── Tahririyat ── -->
+  <div class="dash-section" id="editorial">
+    <div class="dash-section-header">
+      <h2 class="dash-section-title"><i class="fa fa-people-group" style="color:var(--accent);"></i>{% trans "Tahririyat a'zolari" %}</h2>
+      <a href="{% url 'journal:editorial_create' %}" class="btn-dash-add"><i class="fa fa-plus"></i>{% trans "Qo'shish" %}</a>
+    </div>
+    <div class="dash-card">
+      <table class="dash-table">
+        <thead><tr>
+          <th>#</th><th>{% trans "Ism, Familiya" %}</th>
+          <th>{% trans "Lavozim" %}</th>
+          <th>{% trans "Telefon" %}</th>
+          <th>{% trans "Sana" %}</th>
+          <th>{% trans "Amallar" %}</th>
+        </tr></thead>
+        <tbody>
+        {% for e in editorials %}
+        <tr>
+          <td style="color:var(--text-muted); width:36px;">{{ forloop.counter }}</td>
+          <td><strong>{{ e.first_name }} {{ e.last_name }}</strong></td>
+          <td>{{ e.position }}</td>
+          <td>{{ e.phone_number|default:"—" }}</td>
+          <td style="color:var(--text-muted); font-size:0.8rem; white-space:nowrap;">{{ e.created_at|date:"d.m.Y" }}</td>
+          <td style="white-space:nowrap;">
+            <a href="{{ e.get_update_url }}" class="btn-action btn-edit" style="font-size:0.72rem; padding:4px 10px;"><i class="fa fa-pen"></i></a>
+            <a href="{{ e.get_delete_url }}" class="btn-action btn-delete" style="font-size:0.72rem; padding:4px 10px; margin-left:4px;"><i class="fa fa-trash"></i></a>
+          </td>
+        </tr>
+        {% empty %}<tr class="empty-row"><td colspan="6">{% trans "A'zolar mavjud emas" %}</td></tr>{% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ── Arxiv ── -->
+  <div class="dash-section" id="journals">
+    <div class="dash-section-header">
+      <h2 class="dash-section-title"><i class="fa fa-box-archive" style="color:var(--accent);"></i>{% trans "Arxiv" %}</h2>
+      <a href="{% url 'journal:journal_create' %}" class="btn-dash-add"><i class="fa fa-plus"></i>{% trans "Qo'shish" %}</a>
+    </div>
+    <div class="dash-card">
+      <table class="dash-table">
+        <thead><tr>
+          <th>#</th><th>{% trans "Yil" %}</th><th>{% trans "Son" %}</th>
+          <th>{% trans "Sana" %}</th><th>{% trans "Amallar" %}</th>
+        </tr></thead>
+        <tbody>
+        {% for j in journals %}
+        <tr>
+          <td style="color:var(--text-muted); width:36px;">{{ forloop.counter }}</td>
+          <td><strong>{{ j.source_year }}</strong></td>
+          <td>{{ j.source_number }}-son</td>
+          <td style="color:var(--text-muted); font-size:0.8rem; white-space:nowrap;">{{ j.created_at|date:"d.m.Y" }}</td>
+          <td style="white-space:nowrap;">
+            <a href="{{ j.get_update_url }}" class="btn-action btn-edit" style="font-size:0.72rem; padding:4px 10px;"><i class="fa fa-pen"></i></a>
+            <a href="{{ j.get_delete_url }}" class="btn-action btn-delete" style="font-size:0.72rem; padding:4px 10px; margin-left:4px;"><i class="fa fa-trash"></i></a>
+          </td>
+        </tr>
+        {% empty %}<tr class="empty-row"><td colspan="5">{% trans "Arxiv bo'sh" %}</td></tr>{% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ── Xabarlar ── -->
+  <div class="dash-section" id="messages">
+    <div class="dash-section-header">
+      <h2 class="dash-section-title"><i class="fa fa-envelope" style="color:var(--accent);"></i>{% trans "Xabarlar" %}{% if message_count %} <span style="background:#e74c3c;color:#fff;border-radius:10px;padding:1px 8px;font-size:0.72rem;">{{ message_count }}</span>{% endif %}</h2>
+      <a href="{% url 'journal:message_list' %}" class="btn-dash-add green"><i class="fa fa-list"></i>{% trans "Barchasi" %}</a>
+    </div>
+    <div class="dash-card">
+      <table class="dash-table">
+        <thead><tr>
+          <th>#</th><th>{% trans "Yuboruvchi" %}</th>
+          <th>{% trans "Xabar" %}</th><th>{% trans "Holat" %}</th>
+          <th>{% trans "Sana" %}</th>
+        </tr></thead>
+        <tbody>
+        {% for m in messages %}
+        <tr>
+          <td style="color:var(--text-muted); width:36px;">{{ forloop.counter }}</td>
+          <td><strong>{{ m.sender.username|default:"—" }}</strong></td>
+          <td style="max-width:300px;">{{ m.message|truncatechars:60 }}</td>
+          <td>
+            {% if m.is_read %}
+            <span style="color:#27ae60; font-size:0.78rem; font-weight:600;"><i class="fa fa-check me-1"></i>{% trans "O'qilgan" %}</span>
+            {% else %}
+            <span style="color:#e74c3c; font-size:0.78rem; font-weight:600;"><i class="fa fa-circle fa-xs me-1"></i>{% trans "Yangi" %}</span>
+            {% endif %}
+          </td>
+          <td style="color:var(--text-muted); font-size:0.8rem; white-space:nowrap;">{{ m.created_at|date:"d.m.Y" }}</td>
+        </tr>
+        {% empty %}<tr class="empty-row"><td colspan="5">{% trans "Xabarlar mavjud emas" %}</td></tr>{% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ── Foydalanuvchilar (super admin) ── -->
+  {% if is_super %}
+  <div class="dash-section" id="users">
+    <div class="dash-section-header">
+      <h2 class="dash-section-title"><i class="fa fa-users" style="color:var(--accent);"></i>{% trans "Foydalanuvchilar" %}</h2>
+      {% if user_count > 10 %}<span style="font-size:0.82rem; color:var(--text-muted);">{% trans "Jami:" %} {{ user_count }}</span>{% endif %}
+    </div>
+    <div class="dash-card">
+      <table class="dash-table">
+        <thead><tr>
+          <th>#</th><th>{% trans "Foydalanuvchi" %}</th>
+          <th>Email</th><th>{% trans "Rol" %}</th>
+          <th>{% trans "Sana" %}</th>
+        </tr></thead>
+        <tbody>
+        {% for u in users %}
+        <tr>
+          <td style="color:var(--text-muted); width:36px;">{{ forloop.counter }}</td>
+          <td>
+            <strong>{{ u.username }}</strong>
+            {% if u.get_full_name %}<span style="color:var(--text-muted); font-size:0.8rem;"> · {{ u.get_full_name }}</span>{% endif %}
+          </td>
+          <td style="font-size:0.85rem; color:var(--text-muted);">{{ u.email|default:"—" }}</td>
+          <td>
+            {% if u.is_superuser %}
+            <span class="role-badge role-super"><i class="fa fa-crown"></i> Super Admin</span>
+            {% elif u.profile.is_admin %}
+            <span class="role-badge role-admin"><i class="fa fa-shield-halved"></i> Admin</span>
+            {% else %}
+            <span class="role-badge role-user"><i class="fa fa-user"></i> Foydalanuvchi</span>
+            {% endif %}
+          </td>
+          <td style="color:var(--text-muted); font-size:0.8rem; white-space:nowrap;">{{ u.date_joined|date:"d.m.Y" }}</td>
+        </tr>
+        {% empty %}<tr class="empty-row"><td colspan="5">—</td></tr>{% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% endif %}
+
+</div>
+
+<script>
+function setTab(el){
+  document.querySelectorAll('.dash-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+}
+// Active tab on scroll
+const sections = document.querySelectorAll('.dash-section');
+const tabs = document.querySelectorAll('.dash-tab');
+window.addEventListener('scroll', ()=>{
+  let cur = '';
+  sections.forEach(s=>{ if(window.scrollY >= s.offsetTop - 120) cur = s.id; });
+  tabs.forEach(t=>{ t.classList.toggle('active', t.getAttribute('href') === '#'+cur); });
+}, {passive:true});
+</script>
+{% endblock %}

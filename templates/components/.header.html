@@ -1,0 +1,88 @@
+{% load static %}
+{% load i18n %}
+<div class="px-3 py-2 text-bg-dark border-bottom">
+    <div class="mx-5">
+        <div class="container-fluid d-flex flex-wrap align-items-center justify-content-right justify-content-lg-start">
+            <a href="/" class="d-flex align-items-center my-2 my-lg-0 me-lg-auto text-white text-decoration-none">
+                <span class="font-ink-free fs-2 ">{% blocktrans %}Surxondaryo: ilm va tafakkur{% endblocktrans %}</span>
+            </a>
+
+            <ul class="nav col-12 col-lg-auto my-2 justify-content-center my-md-0 text-small">
+                <li class="hover-panel">
+                    <a href="{% url 'journal:main_page' %}" class="nav-link" style="color: lime;">
+                        <i class="fa-solid fa-house fs-4"></i>
+                        <span class="span-color-always">{% blocktrans %}Asosiy{% endblocktrans %}</span>
+                    </a>
+                </li>
+                <li class="hover-panel">
+                    <a href="{% url 'journal:post_list' %}" class="nav-link" style="color: lime;">
+                        <i class="fa-regular fa-newspaper fs-4"></i>
+                        <span class="span-color-always">{% blocktrans %}Yangiliklar{% endblocktrans %}</span>
+                    </a>
+                </li>
+                <li class="hover-panel">
+                    <a href="{% url 'journal:article_list' %}" class="nav-link" style="color: lime;">
+                        <i class="fa-solid fa-book-journal-whills fs-4"></i>
+                        <span class="span-color-always">{% blocktrans %}Maqolalar{% endblocktrans %}</span>
+                    </a>
+                </li>
+                <li class="hover-panel">
+                    <a href="{% url 'journal:contact' %}" class="nav-link" style="color: lime;">
+                        <i class="fa-regular fa-address-book fs-4"></i>
+                        <span class="span-color-always">{% blocktrans %}Bog'lanish{% endblocktrans %}</span>
+                    </a>
+                </li>
+                 <li class="hover-panel">
+                    <a href="{% url 'journal:journal_list' %}" class="nav-link" style="color: lime;">
+                        <i class="fa-regular fa-folder-open fs-4"></i>
+                        <span class="span-color-always">{% blocktrans %}Arxiv{% endblocktrans %}</span>
+                    </a>
+                </li>
+                <li class="hover-panel">
+                    <a href="{% url 'journal:about_journal' %}" class="nav-link" style="color: lime;">
+                        <i class="fa-solid fa-circle-info fs-4"></i>
+                        <span class="span-color-always">{% blocktrans %}Jurnal haqida{% endblocktrans %}</span>
+                    </a>
+                </li>
+                <li class="hover-panel">
+                    <a href="{% url 'journal:booking_article' %}" class="nav-link" style="color: lime;">
+                        <i class="fa-regular fa-pen-to-square fs-4"></i>
+                        <span class="span-color-always">{% blocktrans %}Maqola yuborish{% endblocktrans %}</span>
+                    </a>
+                </li>
+                <li class="hover-panel">
+                    <a href="{% url 'journal:nashr_etiketkasi' %}" class="nav-link" style="color: lime;">
+                        <i class="fa-solid fa-stamp fs-4"></i>
+                        <span class="span-color-always">{% blocktrans %}Nashr etiketkasi{% endblocktrans %}</span>
+                    </a>
+                </li>
+                <li class="hover-panel">
+                    <a href="{% url 'journal:maxfiylik_siyosati' %}" class="nav-link" style="color: lime;">
+                        <i class="fa-solid fa-shield-halved fs-4"></i>
+                        <span class="span-color-always">{% blocktrans %}Maxfiylik siyosati{% endblocktrans %}</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="px-3 py-2 border-bottom mb-3">
+    <div class="mx-5 d-flex flex-wrap justify-content-center ">
+        <form class="col-12 col-lg-auto mb-2 mb-lg-0 me-lg-auto" role="search">
+            <input type="search" class="form-control" placeholder="Qidiruv..." aria-label="Search">
+        </form>
+        {% if request.user.is_authenticated %}
+        {% include 'components/.profile.html' %}
+        {% else %}
+        <div class="text-end">
+            <a href="{% url 'users:login' %}" class="btn btn-light text-dark me-2">
+                {% blocktrans %}Login{% endblocktrans %}
+            </a>
+            <a href="{% url 'users:register' %}" class="btn btn-success" style="color: lime;">
+                {% blocktrans %}Sign-up{% endblocktrans %}
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>

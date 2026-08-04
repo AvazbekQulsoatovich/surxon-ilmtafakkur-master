@@ -1,0 +1,52 @@
+{% load static %}
+{% load i18n %}
+
+<li class="nav-item">
+    <a class="nav-link {% if request.resolver_match.url_name == 'main_page' %}active{% endif %}"
+       href="{% url 'journal:main_page' %}">{% blocktrans %}Asosiy{% endblocktrans %}</a>
+</li>
+<li class="nav-item">
+    <a class="nav-link {% if 'article' in request.path %}active{% endif %}"
+       href="{% url 'journal:article_list' %}">{% blocktrans %}Maqolalar{% endblocktrans %}</a>
+</li>
+<li class="nav-item">
+    <a class="nav-link {% if 'post' in request.path %}active{% endif %}"
+       href="{% url 'journal:post_list' %}">{% blocktrans %}Yangiliklar{% endblocktrans %}</a>
+</li>
+<li class="nav-item">
+    <a class="nav-link {% if 'editorial' in request.path %}active{% endif %}"
+       href="{% url 'journal:editorial_list' %}">{% blocktrans %}Tahririyat{% endblocktrans %}</a>
+</li>
+<li class="nav-item">
+    <a class="nav-link {% if 'about' in request.path %}active{% endif %}"
+       href="{% url 'journal:about_journal' %}">{% blocktrans %}Jurnal haqida{% endblocktrans %}</a>
+</li>
+<li class="nav-item">
+    <a class="nav-link {% if 'journal/list' in request.path %}active{% endif %}"
+       href="{% url 'journal:journal_list' %}">{% blocktrans %}Arxiv{% endblocktrans %}</a>
+</li>
+<li class="nav-item">
+    <a class="nav-link {% if 'booking' in request.path %}active{% endif %}"
+       href="{% url 'journal:booking_article' %}">{% blocktrans %}Maqola yuborish{% endblocktrans %}</a>
+</li>
+<li class="nav-item">
+    <a class="nav-link {% if 'contact' in request.path %}active{% endif %}"
+       href="{% url 'journal:contact' %}">{% blocktrans %}Bog'lanish{% endblocktrans %}</a>
+</li>
+<li class="nav-item">
+    <a class="nav-link {% if 'nashr-etiketkasi' in request.path %}active{% endif %}"
+       href="{% url 'journal:nashr_etiketkasi' %}">{% blocktrans %}Nashr etiketkasi{% endblocktrans %}</a>
+</li>
+<li class="nav-item">
+    <a class="nav-link {% if 'maxfiylik-siyosati' in request.path %}active{% endif %}"
+       href="{% url 'journal:maxfiylik_siyosati' %}">{% blocktrans %}Maxfiylik siyosati{% endblocktrans %}</a>
+</li>
+{% if request.user.is_authenticated and request.user.is_superuser or request.user.is_authenticated and request.profile.is_admin %}
+<li class="nav-item">
+    <a class="nav-link {% if 'dashboard' in request.path %}active{% endif %}"
+       href="{% url 'journal:dashboard' %}"
+       style="color:var(--accent-light) !important; font-weight:700;">
+        <i class="fa fa-gauge-high fa-sm me-1"></i>{% blocktrans %}Panel{% endblocktrans %}
+    </a>
+</li>
+{% endif %}

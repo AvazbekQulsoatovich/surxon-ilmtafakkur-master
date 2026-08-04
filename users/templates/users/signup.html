@@ -1,0 +1,178 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% blocktrans %}Ro'yxatdan o'tish{% endblocktrans %}{% endblock %}
+
+{% block style %}
+<style>
+.signup-card { background:#fff; border-radius:14px; box-shadow:0 4px 30px rgba(27,58,107,0.12); overflow:hidden; }
+.signup-side {
+    background: linear-gradient(160deg, var(--primary-dark) 0%, var(--primary) 60%, var(--secondary) 100%);
+    padding: 48px 32px;
+    display: flex; flex-direction: column; justify-content: center;
+    color: #fff;
+}
+.signup-side-title { font-family:'Georgia',serif; font-size:1.6rem; font-weight:700; margin-bottom:12px; }
+.signup-side-text  { font-size:0.88rem; color:rgba(255,255,255,0.72); line-height:1.7; }
+.signup-divider    { width:50px; height:3px; background:var(--accent); border-radius:2px; margin:16px 0; }
+.signup-form-wrap  { padding: 36px 40px; }
+.form-group        { margin-bottom: 16px; }
+.form-label-custom { font-size:0.78rem; font-weight:700; color:var(--primary); letter-spacing:0.4px; text-transform:uppercase; margin-bottom:5px; display:block; }
+.form-control      { border:1.5px solid var(--border); border-radius:8px; padding:10px 14px; font-size:0.9rem; width:100%;
+                     transition:border-color .2s, box-shadow .2s; background:#f8f9fc; color:var(--text-dark); }
+.form-control:focus{ border-color:var(--primary-light); box-shadow:0 0 0 3px rgba(27,58,107,0.1); outline:none; background:#fff; }
+input[type="file"].form-control { padding:6px 10px; cursor:pointer; }
+.error-msg         { color:#e74c3c; font-size:0.78rem; margin-top:4px; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-xl-9 col-lg-10">
+            <div class="signup-card">
+                <div class="row g-0">
+
+                    <!-- Left decorative side -->
+                    <div class="col-md-4 signup-side d-none d-md-flex">
+                        <div>
+                            <div class="signup-divider"></div>
+                            <p class="signup-side-title">{% blocktrans %}Xush kelibsiz!{% endblocktrans %}</p>
+                            <p class="signup-side-text">
+                                {% blocktrans %}Ilmiy maqolalaringizni nashr etish uchun ro'yxatdan o'ting.{% endblocktrans %}
+                            </p>
+                            <div class="signup-divider mt-4"></div>
+                            <p class="signup-side-text mt-3" style="font-size:0.8rem; opacity:0.6;">
+                                SURXONDARYO ILM VA TAFAKKUR
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Right form side -->
+                    <div class="col-md-8">
+                        <div class="signup-form-wrap">
+                            <h2 style="font-family:'Georgia',serif; font-size:1.5rem; font-weight:700; color:var(--primary); margin-bottom:6px;">
+                                {% blocktrans %}Ro'yxatdan o'tish{% endblocktrans %}
+                            </h2>
+                            <p style="font-size:0.82rem; color:var(--text-muted); margin-bottom:24px;">
+                                {% blocktrans %}Barcha maydonlarni to'ldiring{% endblocktrans %}
+                            </p>
+
+                            <form action="" method="post" enctype="multipart/form-data">
+                                {% csrf_token %}
+
+                                <!-- Username -->
+                                <div class="form-group">
+                                    <label class="form-label-custom">
+                                        <i class="fa fa-user me-1"></i>{% blocktrans %}Foydalanuvchi nomi{% endblocktrans %}
+                                    </label>
+                                    {% if user_form.username.errors %}<p class="error-msg">{{ user_form.username.errors|striptags }}</p>{% endif %}
+                                    {{ user_form.username }}
+                                </div>
+
+                                <!-- Email -->
+                                <div class="form-group">
+                                    <label class="form-label-custom">
+                                        <i class="fa fa-envelope me-1"></i>Email
+                                    </label>
+                                    {% if user_form.email.errors %}<p class="error-msg">{{ user_form.email.errors|striptags }}</p>{% endif %}
+                                    {{ user_form.email }}
+                                </div>
+
+                                <!-- First + Last name -->
+                                <div class="row g-3">
+                                    <div class="col-12 col-sm-6">
+                                        <div class="form-group mb-0">
+                                            <label class="form-label-custom">
+                                                <i class="fa fa-id-card me-1"></i>{% blocktrans %}Ism{% endblocktrans %}
+                                            </label>
+                                            {% if user_form.first_name.errors %}<p class="error-msg">{{ user_form.first_name.errors|striptags }}</p>{% endif %}
+                                            {{ user_form.first_name }}
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-sm-6">
+                                        <div class="form-group mb-0">
+                                            <label class="form-label-custom">
+                                                <i class="fa fa-id-card me-1"></i>{% blocktrans %}Familiya{% endblocktrans %}
+                                            </label>
+                                            {% if user_form.last_name.errors %}<p class="error-msg">{{ user_form.last_name.errors|striptags }}</p>{% endif %}
+                                            {{ user_form.last_name }}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Password -->
+                                <div class="row g-3 mt-0">
+                                    <div class="col-12 col-sm-6">
+                                        <div class="form-group mb-0">
+                                            <label class="form-label-custom">
+                                                <i class="fa fa-lock me-1"></i>{% blocktrans %}Parol{% endblocktrans %}
+                                            </label>
+                                            {% if user_form.password.errors %}<p class="error-msg">{{ user_form.password.errors|striptags }}</p>{% endif %}
+                                            {{ user_form.password }}
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-sm-6">
+                                        <div class="form-group mb-0">
+                                            <label class="form-label-custom">
+                                                <i class="fa fa-lock me-1"></i>{% blocktrans %}Parolni tasdiqlang{% endblocktrans %}
+                                            </label>
+                                            {% if user_form.password2.errors %}<p class="error-msg">{{ user_form.password2.errors|striptags }}</p>{% endif %}
+                                            {{ user_form.password2 }}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Phone -->
+                                <div class="form-group mt-3">
+                                    <label class="form-label-custom">
+                                        <i class="fa fa-phone me-1"></i>{% blocktrans %}Telefon{% endblocktrans %}
+                                    </label>
+                                    {% if profile_form.telephone.errors %}<p class="error-msg">{{ profile_form.telephone.errors|striptags }}</p>{% endif %}
+                                    {{ profile_form.telephone }}
+                                </div>
+
+                                <!-- Photo + Birthdate -->
+                                <div class="row g-3">
+                                    <div class="col-12 col-sm-6">
+                                        <div class="form-group mb-0">
+                                            <label class="form-label-custom">
+                                                <i class="fa fa-image me-1"></i>{% blocktrans %}Rasm{% endblocktrans %}
+                                            </label>
+                                            {% if profile_form.photo.errors %}<p class="error-msg">{{ profile_form.photo.errors|striptags }}</p>{% endif %}
+                                            {{ profile_form.photo }}
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-sm-6">
+                                        <div class="form-group mb-0">
+                                            <label class="form-label-custom">
+                                                <i class="fa fa-calendar me-1"></i>{% blocktrans %}Tug'ilgan sana{% endblocktrans %}
+                                            </label>
+                                            {% if profile_form.date_birth.errors %}<p class="error-msg">{{ profile_form.date_birth.errors|striptags }}</p>{% endif %}
+                                            {{ profile_form.date_birth }}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Submit -->
+                                <button type="submit" class="btn-read-more w-100 text-center py-2 mt-4"
+                                        style="display:block; font-size:0.95rem; border:none; cursor:pointer;">
+                                    <i class="fa fa-user-plus me-2"></i>{% blocktrans %}Ro'yxatdan o'tish{% endblocktrans %}
+                                </button>
+
+                                <p class="text-center mt-3 mb-0" style="font-size:0.82rem; color:var(--text-muted);">
+                                    {% blocktrans %}Akkaunt bormi?{% endblocktrans %}
+                                    <a href="{% url 'users:login' %}" style="color:var(--primary); font-weight:600; text-decoration:none;">
+                                        {% blocktrans %}Kirish{% endblocktrans %}
+                                    </a>
+                                </p>
+                            </form>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

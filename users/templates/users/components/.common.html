@@ -1,0 +1,20 @@
+{% load static %}
+{% load i18n %}
+<li class="nav-item fornow">
+    <a class="nav-link active" href="{% url 'users:profile_update' %}">
+        <i class="lime-color fa-regular fa-pen-to-square fs-4" style="color: red"></i>
+        <span class="span-color-always2" style="color: red">{% blocktrans %}Profile tahrirlash{% endblocktrans %}</span>
+    </a>
+</li>
+<li class="nav-item fornow">
+    <a class="nav-link active" href="{% url 'password_change' %}">
+        <i class="lime-color fa-solid fa-key fs-4" style="color: red"></i>
+        <span class="span-color-always2" style="color: red">{% blocktrans %}Parolni almashtirish{% endblocktrans %}</span>
+    </a>
+</li>
+<li class="nav-item fornow">
+    <a class="nav-link active" href="{% url 'users:logout' %}">
+        <i class="lime-color fa-solid fa-right-from-bracket fs-4" style="color: red"></i>
+        <span class="span-color-always2" style="color: red">{% blocktrans %}Chiqish{% endblocktrans %}</span>
+    </a>
+</li>

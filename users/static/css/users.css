@@ -1,0 +1,17 @@
+
+.hover-panel:hover{
+    background-image: linear-gradient(lightgoldenrodyellow, lightyellow, white);
+}
+
+
+.span-color-in-user
+{
+    color: yellow;
+}
+
+
+.span-hover-in-user:hover
+{
+    color: black;
+}
+

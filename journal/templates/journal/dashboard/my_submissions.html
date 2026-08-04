@@ -1,0 +1,154 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Mening yuborgan maqolalarim" %}{% endblock %}
+
+{% block style %}
+<style>
+    .sub-list-card {
+        background: var(--bg-card);
+        border-radius: var(--radius);
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow-sm);
+        padding: 30px;
+        margin-top: 20px;
+        margin-bottom: 40px;
+    }
+    .sub-list-title {
+        font-family: var(--serif);
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--primary);
+        margin-bottom: 20px;
+    }
+    .status-badge {
+        font-size: 0.8rem;
+        font-weight: 700;
+        padding: 4px 10px;
+        border-radius: 12px;
+        display: inline-block;
+    }
+    .badge-pending {
+        background-color: rgba(243, 156, 18, 0.15);
+        color: #e67e22;
+        border: 1px solid rgba(243, 156, 18, 0.3);
+    }
+    .badge-reviewing {
+        background-color: rgba(52, 152, 219, 0.15);
+        color: #2980b9;
+        border: 1px solid rgba(52, 152, 219, 0.3);
+    }
+    .badge-accepted {
+        background-color: rgba(46, 204, 113, 0.15);
+        color: #27ae60;
+        border: 1px solid rgba(46, 204, 113, 0.3);
+    }
+    .badge-rejected {
+        background-color: rgba(231, 76, 60, 0.15);
+        color: #c0392b;
+        border: 1px solid rgba(231, 76, 60, 0.3);
+    }
+    .table-submissions th {
+        font-weight: 700;
+        color: var(--primary);
+        border-bottom: 2px solid var(--border);
+    }
+    .feedback-box {
+        font-size: 0.85rem;
+        background: #fdfefe;
+        border: 1px solid rgba(0,0,0,0.05);
+        border-radius: 8px;
+        padding: 10px 14px;
+        margin-top: 8px;
+        color: var(--text-2);
+    }
+    .feedback-label {
+        font-weight: 700;
+        color: var(--primary);
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        margin-bottom: 4px;
+        display: block;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <div class="sub-list-card">
+                <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-2">
+                    <h2 class="sub-list-title mb-0">{% trans "Mening yuborgan maqolalarim" %}</h2>
+                    <a href="{% url 'journal:submit_article' %}" class="btn navbar-auth-btn-register" style="height:auto !important; padding:8px 16px !important;">
+                        <i class="fa fa-plus me-1"></i>{% trans "Yangi yuborish" %}
+                    </a>
+                </div>
+
+                {% if submissions %}
+                <div class="table-responsive">
+                    <table class="table table-hover table-submissions align-middle">
+                        <thead>
+                            <tr>
+                                <th style="width: 50%;">{% trans "Maqola nomi" %}</th>
+                                <th style="width: 20%;">{% trans "Yuborilgan sana" %}</th>
+                                <th style="width: 15%;">{% trans "Holat" %}</th>
+                                <th style="width: 15%; text-align: right;">{% trans "Harakat" %}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for sub in submissions %}
+                            <tr>
+                                <td>
+                                    <div class="fw-bold text-dark">{{ sub.title }}</div>
+                                    <div class="text-muted small mt-1" style="max-height: 48px; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">
+                                        {{ sub.abstract }}
+                                    </div>
+                                    {% if sub.feedback %}
+                                    <div class="feedback-box">
+                                        <span class="feedback-label"><i class="fa fa-comment-dots me-1"></i> {% trans "Tahririyat taqrizi" %}:</span>
+                                        {{ sub.feedback }}
+                                    </div>
+                                    {% endif %}
+                                </td>
+                                <td>{{ sub.created_at|date:"d.m.Y H:i" }}</td>
+                                <td>
+                                    {% if sub.status == 'pending' %}
+                                        <span class="status-badge badge-pending">{% trans "Kutilmoqda" %}</span>
+                                    {% elif sub.status == 'reviewing' %}
+                                        <span class="status-badge badge-reviewing">{% trans "Taqrizda" %}</span>
+                                    {% elif sub.status == 'accepted' %}
+                                        <span class="status-badge badge-accepted">{% trans "Qabul qilindi" %}</span>
+                                    {% elif sub.status == 'rejected' %}
+                                        <span class="status-badge badge-rejected">{% trans "Rad etildi" %}</span>
+                                    {% endif %}
+                                </td>
+                                <td style="text-align: right;">
+                                    {% if sub.file %}
+                                    <a href="{{ sub.file.url }}" class="btn btn-sm btn-outline-secondary" target="_blank" title="{% trans 'Faylni ko\'rish' %}">
+                                        <i class="fa fa-file-arrow-down me-1"></i>{% trans "Fayl" %}
+                                    </a>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-5 text-muted">
+                    <i class="fa fa-folder-open d-block mb-3 fs-1 text-secondary"></i>
+                    <p class="mb-0">{% trans "Siz hali maqola yubormagansiz." %}</p>
+                </div>
+                {% endif %}
+
+                <div class="mt-4">
+                    <a href="{% url 'users:profile' %}" class="btn btn-outline-secondary">
+                        <i class="fa fa-arrow-left me-1"></i>{% trans "Profilga qaytish" %}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

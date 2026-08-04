@@ -1,0 +1,190 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}VOL. {{ journal.source_number }} ({{ journal.source_year }}){% endblock %}
+
+{% block style %}
+<style>
+.issue-hero {
+    background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+    color: white;
+    padding: 4rem 1rem;
+    text-align: center;
+    border-radius: 0 0 24px 24px;
+    margin-bottom: 3rem;
+    box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.3);
+}
+.issue-hero-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.5px;
+}
+.issue-hero-subtitle {
+    font-size: 1.15rem;
+    opacity: 0.9;
+    font-weight: 500;
+}
+.article-list {
+    max-width: 900px;
+    margin: 0 auto 4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+.article-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 1.75rem;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03);
+    transition: all 0.25s ease;
+}
+.article-card:hover {
+    box-shadow: 0 12px 20px -5px rgba(0, 0, 0, 0.08);
+    transform: translateY(-2px);
+    border-color: #cbd5e1;
+}
+.art-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #0f172a;
+    text-decoration: none;
+    display: block;
+    line-height: 1.4;
+    margin-bottom: 0.75rem;
+    transition: color 0.2s;
+}
+.art-title:hover {
+    color: #2563eb;
+}
+.art-meta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    color: #64748b;
+    font-size: 0.9rem;
+    margin-bottom: 1.25rem;
+}
+.art-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+.art-meta-item i {
+    color: #94a3b8;
+}
+.art-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid #f1f5f9;
+}
+.art-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1.25rem;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.art-btn:active {
+    transform: scale(0.97);
+}
+.art-btn-pdf {
+    background-color: #eff6ff;
+    color: #2563eb;
+    border: 1px solid #bfdbfe;
+}
+.art-btn-pdf:hover {
+    background-color: #dbeafe;
+}
+.art-btn-share {
+    background-color: #f8fafc;
+    color: #475569;
+    border: 1px solid #e2e8f0;
+}
+.art-btn-share:hover {
+    background-color: #f1f5f9;
+    color: #0f172a;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="issue-hero">
+    <div class="container">
+        <h1 class="issue-hero-title">VOL. {{ journal.source_number }} NO. {{ journal.source_number }}</h1>
+        <div class="issue-hero-subtitle">{{ journal.year_category.year|default:"-" }}-YIL</div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="article-list">
+        {% for article in articles %}
+        <div class="article-card">
+            <a href="{{ article.get_absolute_url }}" class="art-title">
+                {{ article.title }}
+            </a>
+            
+            <div class="art-meta">
+                {% if article.authors %}
+                <div class="art-meta-item">
+                    <i class="fa fa-user-pen"></i>
+                    {{ article.authors }}
+                </div>
+                {% endif %}
+                <div class="art-meta-item">
+                    <i class="fa fa-calendar-alt"></i>
+                    {{ article.created_at|date:"M d, Y" }}
+                </div>
+            </div>
+            
+            <!-- Actions -->
+            <div class="art-actions">
+                {% if article.pdf_file %}
+                <a href="{{ article.pdf_file.url }}" target="_blank" class="art-btn art-btn-pdf">
+                    <i class="fa fa-file-pdf"></i> PDF
+                </a>
+                {% endif %}
+                
+                <button onclick="shareLink('{{ request.scheme }}://{{ request.get_host }}{{ article.get_absolute_url }}', '{{ article.title|escapejs }}')" class="art-btn art-btn-share">
+                    <i class="fa fa-share-nodes"></i> Ulashish
+                </button>
+            </div>
+        </div>
+        {% empty %}
+        <div class="text-center py-5" style="color: #94a3b8;">
+            <i class="fa fa-file-excel mb-3" style="font-size: 3rem; opacity: 0.5;"></i>
+            <h4 style="font-weight: 600;">{% trans "Ushbu jurnal sonida hozircha maqolalar yo'q." %}</h4>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+function shareLink(url, title) {
+    if (navigator.share) {
+        navigator.share({
+            title: title,
+            url: url
+        }).catch(console.error);
+    } else {
+        navigator.clipboard.writeText(url).then(() => {
+            alert("Maqola linki nusxalandi! Endi uni xohlagan joyga tashlashingiz mumkin.");
+        }).catch(err => {
+            console.error("Xatolik: ", err);
+        });
+    }
+}
+</script>
+{% endblock %}

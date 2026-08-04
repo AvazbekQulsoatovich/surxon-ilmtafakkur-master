@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% load i18n %}
+{% block title %}
+{% blocktrans %}Ma'qola yuborish{% endblocktrans %}
+{% endblock title %}
+
+
+{% block content %}
+<div class="container">
+
+    <div class="shadow-lg mt-4 rounded-5 border border-5 border-secondary bg-light">
+        <p class="fs-1 m-4 p-2 fw-bold text-center" style="font-family: Times New Roman; color:#3b3b1f">{% blocktrans %}Ma'qola yuborish mezoni{% endblocktrans %}</p>
+        <div class="m-4 p-2 fw-bolder fs-5"
+             style="text-align: justify; text-justify: inter-word; font-family: 'Times New Roman'">
+                <p>{{ data.content|safe }}</p>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+

@@ -1,0 +1,51 @@
+{% extends 'users/profile.html' %}
+{% load static %}
+{% load i18n %}
+{% block title %}
+{% blocktrans %}Xabarlar{% endblocktrans %}
+{% endblock title %}
+
+
+{% block content %}
+<div class="container font-consolas">
+    <p class="text-uppercase ms-5 fw-bold fs-4 font-consolas">{% blocktrans %}Xabarlar ro'yxati{% endblocktrans %} (<span class="fs-5 text-info">{{ messages_count }}</span>) </p>
+    {% for message in messages %}
+    <div class="card col-8 shadow border-0 mb-3">
+        <div class="card-header fw-bold ">
+            <ul class="nav col-12 col-lg-auto my-2 justify-content-center my-md-0 text-small">
+                <li class="text-danger">
+                    <a class="nav-link">
+                       <i class="text-secondary fa-solid fa-user fs-4">: </i>
+                        <span style="font-size: larger" class="text-info">
+                            {{ message.sender.username }}
+                        </span>
+                    </a>
+                </li>
+                <li class="">
+                    <a class="nav-link">
+                        <i class="text-secondary fa-solid fa-phone  fs-4">: </i>
+                        <span style="font-size: larger" class="text-info">{{ message.sender.profile.telephone }}</span>
+                    </a>
+                </li>
+                <li class="">
+                    <a class="nav-link">
+                        <i class="text-secondary fa-solid fa-envelope fs-4">: </i>
+                        <span style="font-size: larger" class="text-info">{{ message.sender.email }}</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <div class="card-body  bg-info">
+            <h5 class="card-title text-center alert alert-info">{{ message.sender.username|title }}{% blocktrans %}dan kelgan xabar{% endblocktrans %}</h5>
+            <hr class="my-2 text-secondary ">
+            <p class="card-text text-dark fw-bolder fs-6">{{ message.message }}</p>
+        </div>
+        <div class="card-footer text-body-secondary">
+            {{ message.created_at|timesince }}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock content %}
+
+

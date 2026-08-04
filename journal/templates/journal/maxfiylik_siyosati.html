@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% blocktrans %}Maxfiylik siyosati{% endblocktrans %}{% endblock %}
+
+{% block content %}
+<div class="container">
+
+    <div class="row mb-4">
+        <div class="col-12 d-flex align-items-center justify-content-between flex-wrap gap-2">
+            <h2 class="section-title mb-0">
+                <i class="fa fa-shield-halved me-2" style="color:var(--accent); font-size:1.1rem;"></i>
+                {% blocktrans %}Maxfiylik siyosati{% endblocktrans %}
+            </h2>
+            {% if is_admin %}
+            <a href="{% url 'journal:sitepage_update' 'maxfiylik' %}"
+               class="btn btn-sm btn-warning">
+                <i class="fa fa-pen me-1"></i> Tahrirlash
+            </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-9">
+            <div class="article-detail-card">
+                <div class="article-detail-header">
+                    <h1 class="article-detail-title" style="font-size:1.3rem;">
+                        {% blocktrans %}Shaxsiy ma'lumotlarni himoya qilish siyosati{% endblocktrans %}
+                    </h1>
+                    <p style="font-size:0.8rem; color:rgba(255,255,255,0.5); margin-top:6px; margin-bottom:0;">
+                        {% blocktrans %}Oxirgi yangilanish: 2024-yil{% endblocktrans %}
+                    </p>
+                </div>
+                <div class="article-detail-body">
+
+                    {% if page and page.content %}
+                        {{ page.content|safe }}
+                    {% else %}
+                    <h5 class="mb-2 mt-3">{% blocktrans %}1. Umumiy qoidalar{% endblocktrans %}</h5>
+                    <p>
+                        {% blocktrans %}Ushbu Maxfiylik siyosati "Surxondaryo: Ilm va Tafakkur" jurnali saytiga tashrif buyuruvchi va undan foydalanuvchi shaxslarning (bundan buyon "Foydalanuvchi") shaxsiy ma'lumotlarini to'plash, saqlash va ishlatish tartibini belgilaydi.{% endblocktrans %}
+                    </p>
+
+                    <h5 class="mb-2 mt-4">{% blocktrans %}2. To'planadigan ma'lumotlar{% endblocktrans %}</h5>
+                    <p>{% blocktrans %}Saytimiz quyidagi ma'lumotlarni to'plashi mumkin:{% endblocktrans %}</p>
+                    <ul>
+                        <li>{% blocktrans %}Ro'yxatdan o'tish vaqtidagi ism, familiya va elektron pochta manzili{% endblocktrans %}</li>
+                        <li>{% blocktrans %}Sайтга kirishda texnik ma'lumotlar (IP-manzil, brauzer turi){% endblocktrans %}</li>
+                        <li>{% blocktrans %}Maqola yuborish vaqtida taqdim etilgan ma'lumotlar{% endblocktrans %}</li>
+                        <li>{% blocktrans %}Aloqa formasida kiritilgan ma'lumotlar{% endblocktrans %}</li>
+                    </ul>
+
+                    <h5 class="mb-2 mt-4">{% blocktrans %}3. Ma'lumotlardan foydalanish{% endblocktrans %}</h5>
+                    <p>{% blocktrans %}To'plangan ma'lumotlar faqat quyidagi maqsadlarda ishlatiladi:{% endblocktrans %}</p>
+                    <ul>
+                        <li>{% blocktrans %}Foydalanuvchi so'rovlarini ko'rib chiqish va javob berish{% endblocktrans %}</li>
+                        <li>{% blocktrans %}Maqolalarni ko'rib chiqish va nashr etish jarayonini ta'minlash{% endblocktrans %}</li>
+                        <li>{% blocktrans %}Sayt xizmatlarini takomillashtirish{% endblocktrans %}</li>
+                        <li>{% blocktrans %}Qonunchilik talablarini bajarish{% endblocktrans %}</li>
+                    </ul>
+
+                    <h5 class="mb-2 mt-4">{% blocktrans %}4. Ma'lumotlarni uchinchi shaxslarga uzatish{% endblocktrans %}</h5>
+                    <p>
+                        {% blocktrans %}Sizning shaxsiy ma'lumotlaringiz qonunchilik talabi yoki sudning majburiy qarori bo'lmagan taqdirda uchinchi shaxslarga uzatilmaydi va sotilmaydi.{% endblocktrans %}
+                    </p>
+
+                    <h5 class="mb-2 mt-4">{% blocktrans %}5. Cookie fayllar{% endblocktrans %}</h5>
+                    <p>
+                        {% blocktrans %}Saytimiz sayt xizmatlarini to'g'ri ishlashini ta'minlash uchun cookie fayllardan foydalanadi. Siz brauzer sozlamalaringiz orqali cookie fayllarni rad etishingiz mumkin, ammo bu saytning ba'zi funksiyalarini cheklashi mumkin.{% endblocktrans %}
+                    </p>
+
+                    <h5 class="mb-2 mt-4">{% blocktrans %}6. Ma'lumotlarni himoya qilish{% endblocktrans %}</h5>
+                    <p>
+                        {% blocktrans %}Biz foydalanuvchilarning shaxsiy ma'lumotlarini himoya qilish uchun tegishli texnik va tashkiliy choralarni ko'ramiz. Ma'lumotlar shifrlangan tarzda saqlanadi.{% endblocktrans %}
+                    </p>
+
+                    <h5 class="mb-2 mt-4">{% blocktrans %}7. Foydalanuvchi huquqlari{% endblocktrans %}</h5>
+                    <p>{% blocktrans %}Foydalanuvchi quyidagi huquqlarga ega:{% endblocktrans %}</p>
+                    <ul>
+                        <li>{% blocktrans %}O'z shaxsiy ma'lumotlarini ko'rish va to'g'rilash{% endblocktrans %}</li>
+                        <li>{% blocktrans %}Ma'lumotlarini o'chirish talabini yuborish{% endblocktrans %}</li>
+                        <li>{% blocktrans %}Ma'lumotlarni qayta ishlashga rozilik berishdan bosh tortish{% endblocktrans %}</li>
+                    </ul>
+
+                    <h5 class="mb-2 mt-4">{% blocktrans %}8. Siyosatga o'zgartirishlar{% endblocktrans %}</h5>
+                    <p>
+                        {% blocktrans %}Ushbu Maxfiylik siyosati vaqti-vaqti bilan yangilanishi mumkin. Muhim o'zgartirishlar haqida foydalanuvchilar xabardor etiladi.{% endblocktrans %}
+                    </p>
+
+                    <h5 class="mb-2 mt-4">{% blocktrans %}9. Bog'lanish{% endblocktrans %}</h5>
+                    <p>
+                        {% blocktrans %}Maxfiylik siyosati bo'yicha savollar yuzasidan:{% endblocktrans %}
+                        <a href="mailto:info@surxon-ilmtafakkur.uz" style="color:var(--accent);">
+                            info@surxon-ilmtafakkur.uz
+                        </a>
+                    </p>
+
+                    <div class="mt-4 p-3" style="background: rgba(var(--accent-rgb, 100,180,100), 0.08); border-left: 3px solid var(--accent); border-radius: 4px;">
+                        <small style="color: #888;">
+                            {% blocktrans %}Ushbu siyosat O'zbekiston Respublikasining "Shaxsiy ma'lumotlar to'g'risida"gi qonuniga muvofiq tuzilgan.{% endblocktrans %}
+                        </small>
+                    </div>
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3">
+            <div class="article-detail-card" style="position: sticky; top: 20px;">
+                <div class="article-detail-header" style="padding:18px 20px 14px;">
+                    <h6 class="mb-0" style="color:#fff; font-weight:700;">
+                        {% blocktrans %}Bo'limlar{% endblocktrans %}
+                    </h6>
+                </div>
+                <div style="padding:16px 20px;">
+                    <ol style="font-size:0.85rem; padding-left:1.2rem; line-height:2;">
+                        <li><a href="#" style="color:var(--accent); text-decoration:none;">{% blocktrans %}Umumiy qoidalar{% endblocktrans %}</a></li>
+                        <li><a href="#" style="color:var(--accent); text-decoration:none;">{% blocktrans %}To'planadigan ma'lumotlar{% endblocktrans %}</a></li>
+                        <li><a href="#" style="color:var(--accent); text-decoration:none;">{% blocktrans %}Foydalanish{% endblocktrans %}</a></li>
+                        <li><a href="#" style="color:var(--accent); text-decoration:none;">{% blocktrans %}Uchinchi shaxslar{% endblocktrans %}</a></li>
+                        <li><a href="#" style="color:var(--accent); text-decoration:none;">Cookie</a></li>
+                        <li><a href="#" style="color:var(--accent); text-decoration:none;">{% blocktrans %}Himoya{% endblocktrans %}</a></li>
+                        <li><a href="#" style="color:var(--accent); text-decoration:none;">{% blocktrans %}Huquqlar{% endblocktrans %}</a></li>
+                        <li><a href="#" style="color:var(--accent); text-decoration:none;">{% blocktrans %}O'zgartirishlar{% endblocktrans %}</a></li>
+                        <li><a href="#" style="color:var(--accent); text-decoration:none;">{% blocktrans %}Bog'lanish{% endblocktrans %}</a></li>
+                    </ol>
+                    <hr style="border-color: rgba(255,255,255,0.1);">
+                    <a href="{% url 'journal:nashr_etiketkasi' %}" class="btn-read-more d-block text-center">
+                        <i class="fa fa-stamp me-1" style="font-size:0.8rem;"></i>
+                        {% blocktrans %}Nashr etiketkasi{% endblocktrans %}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock content %}

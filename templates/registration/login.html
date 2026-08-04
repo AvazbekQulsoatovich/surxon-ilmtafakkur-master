@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% blocktrans %}Kirish{% endblocktrans %}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-5 col-lg-4">
+
+            <div class="article-detail-card" style="margin-top: 10px;">
+
+                <!-- Header -->
+                <div class="article-detail-header text-center" style="padding: 28px 32px 22px;">
+                    <div class="mb-3">
+                        <i class="fa fa-lock" style="font-size:2rem; color:var(--accent-light); opacity:0.9;"></i>
+                    </div>
+                    <h2 style="font-family:'Georgia',serif; font-size:1.5rem; color:#fff; font-weight:700; margin:0;">
+                        {% blocktrans %}Kirish{% endblocktrans %}
+                    </h2>
+                </div>
+
+                <!-- Form -->
+                <div style="padding: 28px 32px;">
+                    <form action="" method="post">
+                        {% csrf_token %}
+                        {% for field in form %}
+                        {% if field.errors %}
+                        <div class="alert alert-danger py-2 px-3 mb-2" style="font-size:0.82rem; border-radius:8px;">
+                            {{ field.errors }}
+                        </div>
+                        {% endif %}
+                        <div class="mb-3">
+                            <label class="form-label" style="font-size:0.82rem; font-weight:600; color:var(--primary); letter-spacing:0.3px;">
+                                {% if field.html_name == 'username' %}{% trans "Foydalanuvchi nomi" %}
+                                {% elif field.html_name == 'password' %}{% trans "Parol" %}
+                                {% else %}{{ field.label }}{% endif %}
+                            </label>
+                            {{ field }}
+                        </div>
+                        {% endfor %}
+
+                        <div class="d-flex gap-2 mt-4">
+                            <button type="submit" class="btn-read-more flex-grow-1 text-center py-2">
+                                <i class="fa fa-sign-in-alt me-2"></i>{% blocktrans %}Kirish{% endblocktrans %}
+                            </button>
+                            <a href="{% url 'password_reset' %}"
+                               class="btn-news-more flex-grow-1 text-center py-2"
+                               style="display:inline-flex; align-items:center; justify-content:center;">
+                                <i class="fa fa-key me-2"></i>{% blocktrans %}Parolni tiklash{% endblocktrans %}
+                            </a>
+                        </div>
+                    </form>
+
+                    <p class="text-center mt-4 mb-0" style="font-size:0.82rem; color:var(--text-muted);">
+                        {% blocktrans %}Akkaunt yo'qmi?{% endblocktrans %}
+                        <a href="{% url 'users:register' %}" style="color:var(--primary); font-weight:600; text-decoration:none;">
+                            {% blocktrans %}Ro'yxatdan o'ting{% endblocktrans %}
+                        </a>
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{% block style %}
+<style>
+input[type="text"], input[type="password"], input[type="email"] {
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    padding: 9px 14px;
+    font-size: 0.9rem;
+    width: 100%;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    background: #f8f9fc;
+    color: var(--text-dark);
+}
+input[type="text"]:focus, input[type="password"]:focus, input[type="email"]:focus {
+    border-color: var(--primary-light);
+    box-shadow: 0 0 0 3px rgba(27,58,107,0.1);
+    outline: none;
+    background: #fff;
+}
+</style>
+{% endblock %}
+{% endblock content %}

@@ -1,0 +1,262 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{{ article.title }}{% endblock %}
+
+{% block style %}
+<style>
+.article-container {
+    background-color: #fff;
+    padding: 50px 60px;
+    margin: 40px auto;
+    border-radius: 2px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    font-family: "Times New Roman", Times, serif;
+    color: #000;
+}
+.article-header-meta {
+    font-family: Arial, sans-serif;
+    font-size: 15px;
+    color: #4b5563;
+    margin-bottom: 25px;
+}
+.article-header-meta a {
+    color: #2563eb;
+    text-decoration: none;
+}
+.article-header-meta a:hover {
+    text-decoration: underline;
+}
+.article-title-text {
+    font-family: Arial, sans-serif;
+    font-size: 24px;
+    font-weight: bold;
+    text-transform: uppercase;
+    margin-bottom: 15px;
+    color: #111;
+    line-height: 1.4;
+}
+.article-authors-text {
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    color: #2563eb;
+    margin-bottom: 30px;
+    font-weight: bold;
+}
+.article-authors-text a {
+    color: #2563eb;
+    text-decoration: none;
+}
+.article-authors-text a:hover {
+    text-decoration: underline;
+}
+.article-info-box {
+    font-family: Arial, sans-serif;
+    border-top: 1px solid #d1d5db;
+    border-bottom: 1px solid #d1d5db;
+    padding: 15px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+}
+.info-box-left {
+    display: flex;
+    flex-grow: 1;
+}
+.info-column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+}
+.info-label {
+    font-size: 15px;
+    color: #111;
+    font-weight: bold;
+}
+.info-value {
+    font-size: 15px;
+    color: #374151;
+    margin-top: 5px;
+}
+.pdf-btn {
+    background-color: #b48600;
+    color: #fff;
+    border: none;
+    padding: 12px 25px;
+    font-family: Arial, sans-serif;
+    font-weight: normal;
+    font-size: 18px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: 0.2s;
+    margin-left: 20px;
+}
+.pdf-btn:hover {
+    background-color: #936d00;
+    color: #fff;
+}
+.section-title {
+    font-family: Arial, sans-serif;
+    font-size: 22px;
+    font-weight: bold;
+    margin: 35px 0 15px 0;
+    color: #000;
+}
+.section-content {
+    font-size: 16px;
+    line-height: 1.6;
+    color: #000;
+    text-align: justify;
+}
+.section-content p {
+    margin-bottom: 15px;
+}
+.admin-actions-bar {
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 60px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="article-container">
+                
+                <div class="article-header-meta">
+                    <i class="fa fa-unlock-alt" style="color: #f97316; font-size: 18px;"></i> 
+                    Articles | Open Access 
+                    {% if article.doi %}
+                    | DOI: <a href="{{ article.doi }}" target="_blank">{{ article.doi }}</a>
+                    {% endif %}
+                </div>
+
+                <h1 class="article-title-text">{{ article.title }}</h1>
+                
+                <div class="article-authors-text">
+                    {% if article.authors %}
+                        {{ article.authors }} ,
+                    {% else %}
+                        Kiritilmagan
+                    {% endif %}
+                </div>
+
+                <div class="article-info-box">
+                    <div class="info-box-left">
+                        <div class="info-column">
+                            <span class="info-label">Published Date</span>
+                            <span class="info-value">{{ article.created_at|date:"Y-m-d" }}</span>
+                        </div>
+                        <div class="info-column" style="border-left: 1px solid #e5e7eb;">
+                            <span class="info-label">Pages</span>
+                            <span class="info-value">{{ article.pages|default:"-" }}</span>
+                        </div>
+                    </div>
+                    
+                    {% if article.pdf_file %}
+                    <a href="{{ article.pdf_file.url }}" target="_blank" class="pdf-btn">
+                        <i class="fa-regular fa-file-pdf"></i> PDF <i class="fa fa-download ms-1"></i>
+                    </a>
+                    {% endif %}
+                </div>
+
+                {% if article.abstract %}
+                <h2 class="section-title">Abstract</h2>
+                <div class="section-content">
+                    {{ article.abstract|safe }}
+                </div>
+                {% endif %}
+
+                {% if article.keywords %}
+                <h2 class="section-title">Keywords</h2>
+                <div class="section-content">
+                    {{ article.keywords }}
+                </div>
+                {% endif %}
+
+                {% if article.references %}
+                <h2 class="section-title">References</h2>
+                <div class="section-content">
+                    {{ article.references|safe }}
+                </div>
+                {% endif %}
+                
+                {% if article.content and article.content != 'None' and not article.abstract %}
+                <div class="section-content mt-4">
+                    {{ article.content|safe }}
+                </div>
+                {% endif %}
+
+                <!-- Article Statistics -->
+                <hr style="margin-top: 40px; border-color: #d1d5db;">
+                <h2 class="section-title" style="margin-top: 15px; margin-bottom: 15px;">Article Statistics</h2>
+                <hr style="border-color: #d1d5db; margin-bottom: 30px;">
+
+                <!-- Copyright License -->
+                <h2 class="section-title">Copyright License</h2>
+                <div class="section-content">
+                    <p style="margin-bottom: 10px;">Copyright (c) {{ article.created_at|date:"Y" }} {{ article.authors|default:"Muallif" }}</p>
+                    <p>
+                        <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">
+                            <img alt="Creative Commons License" style="border-width:0; margin-bottom: 5px;" src="https://i.creativecommons.org/l/by/4.0/88x31.png" />
+                        </a><br />
+                        This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/" style="color: #2563eb; text-decoration: none;">Creative Commons Attribution 4.0 International License</a>.
+                    </p>
+                </div>
+
+                <!-- Download Citations -->
+                <h2 class="section-title" style="margin-top: 40px;">Download Citations</h2>
+                <div class="citation-box" style="background-color: #f8f9fa; border: 1px solid #e9ecef; padding: 25px; margin-top: 15px; font-family: 'Times New Roman', Times, serif;">
+                    <h4 style="font-weight: bold; font-size: 18px; margin-bottom: 15px; color: #000;">How to Cite</h4>
+                    <p style="font-size: 15.5px; margin-bottom: 15px; line-height: 1.6; color: #000;">
+                        {% if article.authors %}{{ article.authors }}.{% endif %} ({{ article.created_at|date:"Y" }}). 
+                        {{ article.title }}. <i>Surxon Ilm-Tafakkuri</i>{% if article.journal %}, {{ article.journal.name }}{% endif %}{% if article.pages %}, {{ article.pages }}{% endif %}.
+                        {% if article.doi %}{{ article.doi }}{% endif %}
+                    </p>
+                    <button style="background: transparent; border: 2px solid #000; padding: 6px 15px; font-weight: bold; font-size: 15px; color: #000; cursor: pointer; margin-bottom: 25px;">Download Citation</button>
+
+                    <div class="citation-download-options" style="background-color: #fff; border: 1px solid #e9ecef; border-radius: 2px;">
+                        <div style="padding: 15px; border-bottom: 1px solid #e9ecef; font-weight: bold; font-size: 16px; color: #000;">
+                            Download Citation
+                        </div>
+                        <div style="padding: 15px; font-family: Arial, sans-serif;">
+                            <a href="#" style="display: block; color: #2563eb; text-decoration: none; margin-bottom: 15px; font-size: 15px;">Endnote/Zotero/Mendeley (RIS)</a>
+                            <a href="#" style="display: block; color: #2563eb; text-decoration: none; font-size: 15px;">BibTeX</a>
+                        </div>
+                    </div>
+                </div>
+
+                {% if request.user.is_superuser or is_admin %}
+                <div class="admin-actions-bar">
+                    <a href="{{ article.get_update_url }}" class="btn btn-sm btn-outline-primary" style="font-weight: 600;">
+                        <i class="fa fa-pen"></i> Tahrirlash
+                    </a>
+                    <form method="post" action="{% url 'journal:article_archive_toggle' article.id %}" class="m-0 p-0" style="display: inline-block;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-outline-dark" style="font-weight: 600;">
+                            <i class="fa fa-archive"></i>
+                            {% if article.is_archived %}Arxivdan chiqarish{% else %}Arxivga qo'shish{% endif %}
+                        </button>
+                    </form>
+                    <a href="{{ article.get_delete_url }}" class="btn btn-sm btn-outline-danger" style="font-weight: 600;">
+                        <i class="fa fa-trash"></i> O'chirish
+                    </a>
+                </div>
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

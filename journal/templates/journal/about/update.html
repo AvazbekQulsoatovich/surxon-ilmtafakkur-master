@@ -1,0 +1,43 @@
+{% extends 'users/_profile.html' %}
+{% load i18n %}
+{% block title %}
+{% blocktrans %}Jurnal haqida{% endblocktrans %}
+{% endblock title %}
+
+
+{% block content %}
+<div class="container shadow-lg rounded-4 mt-4 pt-2">
+    <h1 class="font-consolas mt-2 text-center">
+        <p class="text-end text-xxl-center fs-1 me-2">
+        <span class="me-4">
+            {% blocktrans %}Jurnal haqidani tahrirlash{% endblocktrans %}
+        </span>
+            <a href="{% url 'users:profile' %}" class="text-danger">
+                <i class="fa-solid fa-rectangle-xmark">
+
+                </i>
+            </a>
+        </p>
+    </h1>
+
+    <div class="col-xxl mt-4 mx-4">
+        <form action="" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ forma.media }}
+            {{ forma.as_p }}
+
+            <div class="d-flex justify-content-between">
+                <button type="submit" class="btn btn-outline-success  mb-4">
+                    {% blocktrans %}Tahrirlash{% endblocktrans %}
+                </button>
+                <a href="{% url 'users:profile' %}" class="btn btn-outline-dark  mb-4">
+                    {% blocktrans %}Ortga{% endblocktrans %}
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock content %}
+
+
+

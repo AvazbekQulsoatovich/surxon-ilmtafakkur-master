@@ -1,0 +1,32 @@
+{% load static %}
+{% load i18n %}
+
+<div class="dropdown">
+    <button class="navbar-auth-btn btn d-flex align-items-center gap-2" type="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+        {% if request.user.profile.photo %}
+            <img src="{{ request.user.profile.photo.url }}" alt="{{ request.user.username }}"
+                 style="width:26px; height:26px; border-radius:50%; object-fit:cover; border:1.5px solid var(--accent);">
+        {% else %}
+            <i class="fa-solid fa-user-circle"></i>
+        {% endif %}
+        <span>{{ request.user.first_name|default:request.user.username }}</span>
+        <i class="fa fa-chevron-down" style="font-size:0.65rem; opacity:0.7;"></i>
+    </button>
+    <ul class="dropdown-menu dropdown-menu-end shadow border-0"
+        style="border-radius:10px; min-width:180px; margin-top:8px; overflow:hidden;">
+        <li>
+            <a class="dropdown-item py-2" href="{% url 'users:profile' %}">
+                <i class="fa fa-user me-2" style="color:var(--primary); width:16px;"></i>
+                {% blocktrans %}Profil{% endblocktrans %}
+            </a>
+        </li>
+        <li><hr class="dropdown-divider my-1"></li>
+        <li>
+            <a class="dropdown-item py-2 text-danger" href="{% url 'users:logout' %}">
+                <i class="fa fa-sign-out-alt me-2" style="width:16px;"></i>
+                {% blocktrans %}Chiqish{% endblocktrans %}
+            </a>
+        </li>
+    </ul>
+</div>

@@ -1,0 +1,179 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% blocktrans %}Bog'lanish{% endblocktrans %}{% endblock %}
+
+{% block content %}
+<div class="container">
+
+    <h2 class="section-title mb-4">
+        <i class="fa fa-envelope me-2" style="color:var(--accent); font-size:1.1rem;"></i>
+        {% blocktrans %}Biz bilan bog'laning{% endblocktrans %}
+    </h2>
+
+    <div class="row g-4">
+
+        <!-- Contact info -->
+        <div class="col-lg-5">
+            <div class="article-detail-card h-100">
+                <div class="article-detail-header" style="padding:22px 28px 18px;">
+                    <p class="mb-1" style="font-size:0.72rem; color:rgba(255,255,255,0.6); letter-spacing:1.5px; text-transform:uppercase;">
+                        {% blocktrans %}Ma'lumot{% endblocktrans %}
+                    </p>
+                    <h3 style="font-family:'Georgia',serif; font-size:1.15rem; color:#fff; font-weight:700; margin:0;">
+                        {% blocktrans %}Aloqa ma'lumotlari{% endblocktrans %}
+                    </h3>
+                </div>
+
+                <div style="padding:28px;">
+                    <!-- Address -->
+                    <div class="d-flex gap-3 mb-4">
+                        <div style="width:40px; height:40px; background:rgba(27,58,107,0.08); border-radius:10px;
+                                    display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                            <i class="fa fa-map-marker-alt" style="color:var(--primary); font-size:1rem;"></i>
+                        </div>
+                        <div>
+                            <p class="mb-1" style="font-size:0.72rem; font-weight:700; color:var(--primary); letter-spacing:1px; text-transform:uppercase;">
+                                {% blocktrans %}Manzil{% endblocktrans %}
+                            </p>
+                            <p class="mb-0" style="font-size:0.88rem; color:#444; line-height:1.55;">
+                                {% get_current_language as LANGUAGE_CODE %}
+                                {% if LANGUAGE_CODE == "uz" %}
+                                    {% blocktrans %}Surxondaryo viloyati, Termiz shahri, "Barkamol avlod" ko'chasi 43-uy. Termiz davlat universiteti{% endblocktrans %}
+                                {% elif LANGUAGE_CODE == "en" %}
+                                    {% blocktrans %}Surkhandarya region, Termiz city, "Barkamol Avlod" street 43. Termez State University{% endblocktrans %}
+                                {% elif LANGUAGE_CODE == "ru" %}
+                                    {% blocktrans %}Сурхандарьинская область, город Термез, улица «Баркамол Авлод» 43. Термезский государственный университет{% endblocktrans %}
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+
+                    <hr style="border-color:var(--border); margin:0 0 20px;">
+
+                    <!-- Phone -->
+                    <div class="d-flex gap-3 mb-4">
+                        <div style="width:40px; height:40px; background:rgba(27,58,107,0.08); border-radius:10px;
+                                    display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                            <i class="fa fa-phone" style="color:var(--primary); font-size:1rem;"></i>
+                        </div>
+                        <div>
+                            <p class="mb-1" style="font-size:0.72rem; font-weight:700; color:var(--primary); letter-spacing:1px; text-transform:uppercase;">
+                                {% blocktrans %}Telefon{% endblocktrans %}
+                            </p>
+                            <a href="tel:+998997165656" class="d-block mb-1"
+                               style="font-size:0.9rem; color:var(--primary-light); text-decoration:none; font-weight:600;">
+                                +998 99 716 56 56
+                            </a>
+                            <a href="tel:+998915779050" class="d-block mb-1"
+                               style="font-size:0.9rem; color:var(--primary-light); text-decoration:none; font-weight:600;">
+                                +998 91 577 90 50
+                            </a>
+                            <a href="tel:+998944666755"
+                               style="font-size:0.9rem; color:var(--primary-light); text-decoration:none; font-weight:600;">
+                                +998 94 466 67 55
+                            </a>
+                        </div>
+                    </div>
+
+                    <hr style="border-color:var(--border); margin:0 0 20px;">
+
+                    <!-- Email -->
+                    <div class="d-flex gap-3 mb-4">
+                        <div style="width:40px; height:40px; background:rgba(27,58,107,0.08); border-radius:10px;
+                                    display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                            <i class="fa fa-envelope" style="color:var(--primary); font-size:1rem;"></i>
+                        </div>
+                        <div>
+                            <p class="mb-1" style="font-size:0.72rem; font-weight:700; color:var(--primary); letter-spacing:1px; text-transform:uppercase;">
+                                Email
+                            </p>
+                            <a href="mailto:tursunovsafullo12@mail.ru"
+                               style="font-size:0.9rem; color:var(--primary-light); text-decoration:none; font-weight:600;">
+                                tursunovsafullo12@mail.ru
+                            </a>
+                        </div>
+                    </div>
+
+                    <hr style="border-color:var(--border); margin:0 0 20px;">
+
+                    <!-- Website -->
+                    <div class="d-flex gap-3">
+                        <div style="width:40px; height:40px; background:rgba(27,58,107,0.08); border-radius:10px;
+                                    display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                            <i class="fa fa-globe" style="color:var(--primary); font-size:1rem;"></i>
+                        </div>
+                        <div>
+                            <p class="mb-1" style="font-size:0.72rem; font-weight:700; color:var(--primary); letter-spacing:1px; text-transform:uppercase;">
+                                {% blocktrans %}Veb-sayt{% endblocktrans %}
+                            </p>
+                            <span style="font-size:0.9rem; color:#444; font-weight:600;">
+                                www.surxon-ilmtafakkur.uz
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact form -->
+        <div class="col-lg-7">
+            <div class="article-detail-card">
+                <div class="article-detail-header" style="padding:22px 28px 18px;">
+                    <p class="mb-1" style="font-size:0.72rem; color:rgba(255,255,255,0.6); letter-spacing:1.5px; text-transform:uppercase;">
+                        {% blocktrans %}Xabar{% endblocktrans %}
+                    </p>
+                    <h3 style="font-family:'Georgia',serif; font-size:1.15rem; color:#fff; font-weight:700; margin:0;">
+                        {% blocktrans %}Xabar yuborish{% endblocktrans %}
+                    </h3>
+                </div>
+
+                <div style="padding:28px;">
+                    <form action="{% url 'journal:save_contact' %}" method="post">
+                        {% csrf_token %}
+                        {% for field in form %}
+                        <div class="mb-3">
+                            <label class="form-label" style="font-size:0.82rem; font-weight:600; color:var(--primary); letter-spacing:0.3px;">
+                                {{ field.label }}
+                            </label>
+                            {{ field.errors }}
+                            {{ field }}
+                        </div>
+                        {% endfor %}
+
+                        <button type="submit" class="btn-read-more w-100 text-center py-2 mt-2"
+                                style="display:block; font-size:0.9rem;">
+                            <i class="fa fa-paper-plane me-2"></i>{% blocktrans %}Yuborish{% endblocktrans %}
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% block style %}
+<style>
+input[type="text"], input[type="email"], textarea, select {
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    padding: 9px 14px;
+    font-size: 0.9rem;
+    width: 100%;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    background: #f8f9fc;
+    color: var(--text-dark);
+    font-family: inherit;
+}
+input:focus, textarea:focus, select:focus {
+    border-color: var(--primary-light);
+    box-shadow: 0 0 0 3px rgba(27,58,107,0.1);
+    outline: none;
+    background: #fff;
+}
+textarea { resize: vertical; min-height: 130px; }
+</style>
+{% endblock %}
+{% endblock content %}

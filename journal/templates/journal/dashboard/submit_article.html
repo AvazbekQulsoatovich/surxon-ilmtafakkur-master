@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+
+{% block title %}{% trans "Yangi maqola yuborish" %}{% endblock %}
+
+{% block style %}
+<style>
+    .submit-card {
+        background: var(--bg-card);
+        border-radius: var(--radius);
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow-sm);
+        padding: 30px;
+        margin-top: 20px;
+        margin-bottom: 40px;
+    }
+    .submit-title {
+        font-family: var(--serif);
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--primary);
+        margin-bottom: 8px;
+        text-align: center;
+    }
+    .submit-subtitle {
+        font-size: 0.9rem;
+        color: var(--text-3);
+        margin-bottom: 25px;
+        text-align: center;
+    }
+    .btn-submit {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+        color: #fff;
+        border: none;
+        padding: 10px 24px;
+        border-radius: var(--radius-sm);
+        font-weight: 600;
+        transition: all 0.2s;
+    }
+    .btn-submit:hover {
+        background: var(--accent);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-sm);
+        color: #fff;
+    }
+    .btn-cancel {
+        background: transparent;
+        color: var(--text-2);
+        border: 1px solid var(--border);
+        padding: 10px 24px;
+        border-radius: var(--radius-sm);
+        font-weight: 600;
+        transition: all 0.2s;
+        text-decoration: none;
+    }
+    .btn-cancel:hover {
+        background: rgba(0,0,0,0.05);
+        color: var(--primary);
+    }
+    .instructions-box {
+        background: rgba(200, 168, 75, 0.08);
+        border-left: 4px solid var(--accent);
+        padding: 15px;
+        border-radius: 4px;
+        margin-bottom: 25px;
+        font-size: 0.88rem;
+        line-height: 1.5;
+        color: var(--text-2);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="submit-card">
+                <h2 class="submit-title">{% trans "Yangi maqola topshirish" %}</h2>
+                <p class="submit-subtitle">{% trans "Maqolangiz tahririyat a'zolari tomonidan taqrizdan o'tkaziladi" %}</p>
+                
+                <div class="instructions-box">
+                    <strong>{% trans "Eslatma va talablar:" %}</strong>
+                    <ul class="mb-0 mt-1 ps-3">
+                        <li>{% trans "Maqola fayli faqat PDF, DOC yoki DOCX formatida bo'lishi lozim." %}</li>
+                        <li>{% trans "Sarlavha va annotatsiya (qisqacha annotatsiya) maydonlarini to'ldirish majburiy." %}</li>
+                        <li>{% trans "Yuborilgan maqolalar holatini profilingizdagi 'Mening maqolalarim' sahifasida kuzatishingiz mumkin." %}</li>
+                    </ul>
+                </div>
+
+                <form method="post" enctype="multipart/form-data" class="needs-validation">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">{% trans "Maqola sarlavhasi" %}</label>
+                        {{ form.title }}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">{% trans "Annotatsiya (Qisqacha mazmuni)" %}</label>
+                        {{ form.abstract }}
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">{% trans "Maqola fayli (PDF, DOC, DOCX)" %}</label>
+                        {{ form.file }}
+                    </div>
+
+                    <div class="d-flex align-items-center justify-content-between">
+                        <a href="{% url 'users:profile' %}" class="btn-cancel">
+                            <i class="fa fa-arrow-left me-1"></i>{% trans "Orqaga" %}
+                        </a>
+                        <button type="submit" class="btn-submit">
+                            <i class="fa fa-paper-plane me-1"></i>{% trans "Yuborish" %}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

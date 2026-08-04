@@ -1,0 +1,106 @@
+{% load static %}
+{% load i18n %}
+
+<div class="container-fluid">
+    <div class="row">
+        <nav class="navbar navbar-expand-lg" style="background-color: #8eecf5; margin-top: 8px">
+            <div class="col-sm-1"></div>
+            <div class="container-fluid">
+                {% get_current_language as LANGUAGE_CODE %}
+                {% if LANGUAGE_CODE == "en" %}
+                <a class="navbar-brand fw-bold fs-3 fornow" style="" href="{% url 'journal:main_page' %}">
+                    {% blocktrans %} Surkhandarya: Science and mind {% endblocktrans %}
+                </a>
+                {% elif LANGUAGE_CODE == "uz" %}
+                <a class="navbar-brand fw-bold fs-3 fornow" style="" href="{% url 'journal:main_page' %}">
+                    {% blocktrans %} Surxondaryo: Ilm va tafakkur {% endblocktrans %}
+                </a>
+                {% elif LANGUAGE_CODE == "ru" %}
+                <a class="navbar-brand fw-bold fs-3 fornow" style="" href="{% url 'journal:main_page' %}">
+                    {% blocktrans %} Сурхандаря: наука и мнение {% endblocktrans %}
+                </a>
+                {% endif %}
+                <div class="col-lg offset-lg-2">
+                    <img style="width: 5rem;" src="{% static 'images/book.png' %}"
+                         alt="book">
+                </div>
+                <button class="navbar-toggler bg-lime" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#navbarSupportedContent"
+                        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <form id="language-form" action="{% url 'set_language' %}" method="post" class="borderim">
+                    {% csrf_token %}
+                    <input name="next" type="hidden" value="{{ redirect_to }}">
+                    <select id="language-select" name="language">
+                        {% get_current_language as LANGUAGE_CODE %}
+                        {% get_available_languages as LANGUAGES %}
+                        {% get_language_info_list for LANGUAGES as languages %}
+                        {% for language in languages %}
+                        <option value="{{ language.code }}" {% if language.code == LANGUAGE_CODE %} selected{% endif %}>
+                            {{ language.name_local }} ({{ language.code }})
+                        </option>
+                        {% endfor %}
+                    </select>
+                    <noscript><input type="submit" value="Go"></noscript>
+                </form>
+                <nav class="navbar navbar-expand-sm" style="background-color: #8eecf5">
+
+
+                    <div class="container-fluid malak">
+                        <div class="row">
+                            <div class="col-lg-12 col-lg my-2 d-flex justify-content-end  ">
+                                {% if not request.user.is_authenticated %}
+                                <a href="{% url 'users:login' %}" class="btn btn-outline-dark me-2">
+                                    {% blocktrans %}Kirish{% endblocktrans %}
+                                </a>
+                                <a href="{% url 'users:register' %}" class="btn btn-outline-danger">
+                                    {% blocktrans %}Ro'yxatdan o'tish{% endblocktrans %}
+                                </a>
+                                {% else %}
+                                {% include 'components/.profile.html' %}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                </nav>
+
+            </div>
+
+
+        </nav>
+
+        <nav class="navbar navbar-expand-lg" style="background-color: #8eecf5">
+            <div class="col-sm-1"></div>
+            <div class="container-fluid">
+
+
+                <div class="row">
+                    <div class="collapse navbar-collapse ms-0 malak" id="navbarSupportedContent">
+
+                        <ul class="navbar-nav me-0 mb-2 mb-lg-0">
+                            {% include 'users/components/.navbar.html' %}
+                        </ul>
+                        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        </ul>
+
+                    </div>
+                </div>
+
+
+            </div>
+
+        </nav>
+    </div>
+</div>
+
+
+<script>
+    document.getElementById('language-select').onchange = function() {
+        document.getElementById('language-form').submit();
+    };
+</script>
+
+

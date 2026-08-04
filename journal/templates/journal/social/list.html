@@ -1,0 +1,217 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}Ijtimoiy tarmoqlar{% endblock %}
+
+{% block style %}
+<style>
+/* ── Page header ── */
+.sm-header {
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 12px;
+    margin-bottom: 28px;
+}
+.sm-header-left h2 {
+    font-family: 'Georgia', serif;
+    font-size: 1.55rem; font-weight: 700;
+    color: var(--primary-dark); margin: 0 0 4px;
+}
+.sm-header-left p { font-size: 0.88rem; color: var(--text-muted); margin: 0; }
+
+.sm-add-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 10px 22px; border-radius: 10px;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    color: #fff; font-size: 0.87rem; font-weight: 600;
+    text-decoration: none;
+    box-shadow: 0 3px 14px rgba(27,58,107,0.35);
+    transition: all 0.2s ease;
+    border: none;
+}
+.sm-add-btn:hover {
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 22px rgba(27,58,107,0.45);
+}
+.sm-add-btn svg { width: 16px; height: 16px; stroke: currentColor; fill: none; }
+
+/* ── Grid ── */
+.sm-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 20px;
+}
+
+/* ── Card ── */
+.sm-card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 2px 16px rgba(27,58,107,0.09);
+    border: 1px solid rgba(27,58,107,0.07);
+    overflow: hidden;
+    transition: transform 0.22s ease, box-shadow 0.22s ease;
+    display: flex; flex-direction: column;
+}
+.sm-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 32px rgba(27,58,107,0.16);
+}
+
+.sm-card-body {
+    padding: 24px 22px 18px;
+    display: flex; align-items: center; gap: 18px; flex: 1;
+}
+
+.sm-icon-wrap {
+    width: 60px; height: 60px; border-radius: 15px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; font-size: 1.85rem;
+    transition: transform 0.2s;
+}
+.sm-card:hover .sm-icon-wrap { transform: scale(1.08) rotate(-4deg); }
+
+/* Brand color classes */
+.sm-icon-wrap.facebook   { background: rgba(24,119,242,0.1); color: #1877F2; }
+.sm-icon-wrap.twitter    { background: rgba(29,161,242,0.1); color: #1DA1F2; }
+.sm-icon-wrap.linkedin   { background: rgba(0,119,181,0.1);  color: #0077B5; }
+.sm-icon-wrap.youtube    { background: rgba(255,0,0,0.09);   color: #FF0000; }
+.sm-icon-wrap.telegram   { background: rgba(42,171,238,0.1); color: #2AABEE; }
+.sm-icon-wrap.whatsapp   { background: rgba(37,211,102,0.1); color: #25D366; }
+.sm-icon-wrap.instagram  { background: rgba(225,48,108,0.1); color: #E1306C; }
+.sm-icon-wrap.github     { background: rgba(36,41,46,0.09);  color: #24292E; }
+
+.sm-card-info { min-width: 0; flex: 1; }
+.sm-card-title {
+    font-size: 1rem; font-weight: 700;
+    color: var(--primary-dark);
+    text-transform: capitalize; margin: 0 0 5px;
+}
+.sm-card-url {
+    font-size: 0.78rem; color: var(--text-muted);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    max-width: 160px; display: block;
+    text-decoration: none;
+}
+.sm-card-url:hover { color: var(--primary); }
+
+/* ── Card footer ── */
+.sm-card-footer {
+    display: flex; gap: 8px;
+    padding: 12px 18px 16px;
+    border-top: 1px solid rgba(0,0,0,0.05);
+    background: rgba(248,250,254,0.8);
+}
+.sm-btn {
+    flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    padding: 7px 0; border-radius: 8px; font-size: 0.8rem; font-weight: 600;
+    text-decoration: none; transition: all 0.18s; border: 1.5px solid;
+    cursor: pointer; background: none;
+}
+.sm-btn svg { width: 13px; height: 13px; stroke: currentColor; fill: none; flex-shrink: 0; }
+.sm-btn-edit {
+    color: var(--primary); border-color: rgba(27,58,107,0.25);
+}
+.sm-btn-edit:hover { background: var(--primary); color: #fff; border-color: var(--primary); }
+.sm-btn-del {
+    color: #e74c3c; border-color: rgba(231,76,60,0.25);
+}
+.sm-btn-del:hover { background: #e74c3c; color: #fff; border-color: #e74c3c; }
+
+/* ── Empty state ── */
+.sm-empty {
+    grid-column: 1 / -1;
+    text-align: center; padding: 60px 20px;
+    background: #fff; border-radius: 16px;
+    border: 2px dashed rgba(27,58,107,0.12);
+}
+.sm-empty-icon {
+    width: 72px; height: 72px; border-radius: 50%;
+    background: linear-gradient(135deg, rgba(27,58,107,0.08), rgba(27,58,107,0.04));
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 18px;
+    font-size: 2rem; color: rgba(27,58,107,0.3);
+}
+.sm-empty h4 { font-size: 1.1rem; color: var(--text-muted); font-weight: 600; margin: 0 0 8px; }
+.sm-empty p  { font-size: 0.85rem; color: #adb5bd; margin: 0 0 20px; }
+
+/* ── Stats bar ── */
+.sm-stats {
+    display: flex; align-items: center; gap: 6px;
+    margin-bottom: 20px;
+}
+.sm-stats-count {
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    color: #fff; font-size: 0.75rem; font-weight: 700;
+    padding: 3px 10px; border-radius: 20px;
+}
+.sm-stats-label { font-size: 0.82rem; color: var(--text-muted); }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+
+  <!-- Header -->
+  <div class="sm-header">
+    <div class="sm-header-left">
+      <h2>Ijtimoiy tarmoqlar</h2>
+      <p>Saytdagi barcha ijtimoiy tarmoq havolalari</p>
+    </div>
+    <a href="{% url 'journal:social_media_create' %}" class="sm-add-btn">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" stroke-width="1.8"/><line x1="12" y1="8" x2="12" y2="16" stroke-width="2"/><line x1="8" y1="12" x2="16" y2="12" stroke-width="2"/></svg>
+      Yangi qo'shish
+    </a>
+  </div>
+
+  <!-- Count -->
+  {% if social_media %}
+  <div class="sm-stats">
+    <span class="sm-stats-count">{{ social_media|length }}</span>
+    <span class="sm-stats-label">ta ijtimoiy tarmoq ulangan</span>
+  </div>
+  {% endif %}
+
+  <!-- Grid -->
+  <div class="sm-grid">
+    {% for social in social_media %}
+    <div class="sm-card">
+      <div class="sm-card-body">
+        <div class="sm-icon-wrap {{ social.title }}">
+          <i class="fa-brands {% if social.title == 'instagram' %}fa-square-instagram{% else %}fa-{{ social.title }}{% endif %}"></i>
+        </div>
+        <div class="sm-card-info">
+          <p class="sm-card-title">{{ social.title }}</p>
+          <a href="{{ social.url }}" target="_blank" rel="noopener" class="sm-card-url" title="{{ social.url }}">
+            {{ social.url|truncatechars:32 }}
+          </a>
+        </div>
+      </div>
+      <div class="sm-card-footer">
+        <a href="{{ social.get_update_url }}" class="sm-btn sm-btn-edit">
+          <svg viewBox="0 0 24 24"><path d="M12 20H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v5" stroke-width="1.8"/><path d="M16 18.5l2 .5-.5-2 5-5-1.5-1.5-5 5z" stroke-width="1.5" stroke-linejoin="round"/></svg>
+          Tahrirlash
+        </a>
+        <a href="{{ social.get_delete_url }}" class="sm-btn sm-btn-del">
+          <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6" stroke-width="1.8"/><path d="M19 6l-1 14H6L5 6" stroke-width="1.8"/><path d="M10 11v6M14 11v6" stroke-width="1.8"/><path d="M9 6V4h6v2" stroke-width="1.8"/></svg>
+          O'chirish
+        </a>
+      </div>
+    </div>
+    {% empty %}
+    <div class="sm-empty">
+      <div class="sm-empty-icon">
+        <i class="fa-solid fa-share-nodes"></i>
+      </div>
+      <h4>Hech qanday tarmoq yo'q</h4>
+      <p>Hozircha ijtimoiy tarmoqlar qo'shilmagan</p>
+      <a href="{% url 'journal:social_media_create' %}" class="sm-add-btn" style="margin: 0 auto; width: fit-content;">
+        <svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:currentColor;fill:none;"><circle cx="12" cy="12" r="9" stroke-width="1.8"/><line x1="12" y1="8" x2="12" y2="16" stroke-width="2"/><line x1="8" y1="12" x2="16" y2="12" stroke-width="2"/></svg>
+        Birinchi tarmoqni qo'shish
+      </a>
+    </div>
+    {% endfor %}
+  </div>
+
+</div>
+{% endblock %}
