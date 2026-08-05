@@ -27,7 +27,10 @@
                 </div>
                 <div class="editorial-card-body text-center mt-3">
                     <h5 class="fw-bold mb-1" style="color: var(--primary);">{{ editorial.first_name }} {{ editorial.last_name }}</h5>
-                    <p class="text-muted small mb-2"><i class="fa-solid fa-briefcase me-1" style="color: var(--accent);"></i>{{ editorial.position }}</p>
+                    <p class="text-muted small mb-2"><i class="fa-solid fa-briefcase me-1" style="color: var(--accent);"></i>{{ editorial.get_position_display }}</p>
+                    {% if editorial.description %}
+                    <p class="small mb-2" style="color:#555; font-style:italic;">{{ editorial.description }}</p>
+                    {% endif %}
                     {% if editorial.phone_number %}
                     <p class="text-muted small mb-0"><i class="fa-solid fa-phone me-1" style="color: var(--accent);"></i>{{ editorial.phone_number }}</p>
                     {% endif %}

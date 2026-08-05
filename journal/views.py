@@ -310,7 +310,14 @@ def sitepage_update(request: HttpRequest, page_type):
 
 
 def editorial_list(request: HttpRequest):
-    editorials = Editorial.objects.all()
+    from django.db.models import Case, When, IntegerField, Value
+    editorials = Editorial.objects.annotate(
+        position_order=Case(
+            When(position='bosh_muharrir', then=Value(0)),
+            default=Value(1),
+            output_field=IntegerField(),
+        )
+    ).order_by('position_order', 'first_name')
     paginator = Paginator(editorials, 14)
     page_number = request.GET.get('page', 1)
 

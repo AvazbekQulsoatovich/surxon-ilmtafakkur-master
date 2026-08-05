@@ -247,7 +247,7 @@ class SendingArticleForm(forms.ModelForm):
 class EditorialForm(forms.ModelForm):
     class Meta:
         model = Editorial
-        fields = ('image', 'first_name', 'last_name', 'phone_number', 'position', 'position_uz')
+        fields = ('image', 'first_name', 'last_name', 'phone_number', 'position', 'description')
 
         widgets = {
             'image': forms.FileInput(attrs={
@@ -262,11 +262,16 @@ class EditorialForm(forms.ModelForm):
             'phone_number': forms.TextInput(attrs={
                 'class': 'form-control my-2', 'placeholder': '+998901234567 (ixtiyoriy)'
             }),
-            'position': forms.TextInput(attrs={
-                'class': 'form-control my-2', 'placeholder': 'Lavozim'
-            }),
-            'position_uz': forms.TextInput(attrs={
-                'class': 'form-control my-2', 'placeholder': "Lavozim (O'zbekcha)"
+            'position': forms.Select(attrs={
+                'class': 'form-select my-2',
+            }, choices=[
+                ('bosh_muharrir', "Bosh muharrir"),
+                ('tahrir_azosi', "Tahrir hay'ati a'zosi"),
+            ]),
+            'description': forms.Textarea(attrs={
+                'class': 'form-control my-2',
+                'placeholder': "Masalan: Fizika-matematika fanlari doktori, professor, O'zbekiston FA akademigi",
+                'rows': 3,
             }),
         }
 

@@ -161,17 +161,25 @@ class ArticleFile(BaseModel):
 
 
 class Editorial(BaseModel):
+    BOSH_MUHARRIR = 'bosh_muharrir'
+    TAHRIR_AZOSI = 'tahrir_azosi'
+    POSITION_CHOICES = [
+        (BOSH_MUHARRIR, "Bosh muharrir"),
+        (TAHRIR_AZOSI, "Tahrir hay'ati a'zosi"),
+    ]
+
     image = models.ImageField(upload_to='journal/images/%Y/%m/%d/', blank=True, null=True)
     first_name = models.CharField(max_length=100, default='')
     last_name = models.CharField(max_length=100, default='')
-    position = models.CharField(max_length=150, default='')
+    position = models.CharField(max_length=150, choices=POSITION_CHOICES, default=TAHRIR_AZOSI)
+    description = models.TextField(blank=True, default='', verbose_name="Tavsif (unvon, daraja)")
     phone_number = models.CharField(max_length=20, blank=True, null=True)
     objects = models.Manager()
 
     class Meta:
-        ordering = ['-created_at']
+        ordering = ['position', 'first_name']  # bosh_muharrir < tahrir_azosi (alphabetically first)
         indexes = [
-            models.Index(fields=['-created_at']),
+            models.Index(fields=['position']),
         ]
         verbose_name = "Tahririyat a'zosi"
         verbose_name_plural = "Tahririyat a'zolari"
