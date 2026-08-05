@@ -2,120 +2,163 @@
 {% load static %}
 {% load i18n %}
 
-{% block title %}VOL. {{ journal.source_number }} ({{ journal.source_year }}){% endblock %}
+{% block title %}Jild {{ journal.year_category.year|stringformat:".2s"|default:"X" }} Raq. {{ journal.source_number }} ({{ journal.year_category.year }}): Surxondaryo Ilm va Tafakkur{% endblock %}
 
 {% block style %}
 <style>
+/* ══ OJS Style Issue Detail Layout ══ */
 .issue-hero {
-    background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
-    color: white;
-    padding: 4rem 1rem;
-    text-align: center;
-    border-radius: 0 0 24px 24px;
-    margin-bottom: 3rem;
-    box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.3);
+    background: #fff;
+    padding: 2.5rem 0 1rem;
+    margin-bottom: 2rem;
 }
 .issue-hero-title {
-    font-size: 2.5rem;
-    font-weight: 800;
-    margin-bottom: 0.5rem;
-    letter-spacing: -0.5px;
+    font-family: 'Merriweather', serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #1c1814;
+    margin-bottom: 2rem;
 }
-.issue-hero-subtitle {
-    font-size: 1.15rem;
-    opacity: 0.9;
-    font-weight: 500;
+
+.ojs-issue-header {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 3rem;
 }
-.article-list {
-    max-width: 900px;
-    margin: 0 auto 4rem;
+.ojs-issue-cover {
+    flex-shrink: 0;
+    width: 220px;
+}
+.ojs-issue-cover img {
+    width: 100%;
+    height: auto;
+    border: 1px solid rgba(0,0,0,0.1);
+    box-shadow: 2px 2px 6px rgba(0,0,0,0.08);
+}
+.ojs-issue-placeholder {
+    width: 220px;
+    height: 310px;
+    background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
-}
-.article-card {
-    background: #ffffff;
-    border-radius: 16px;
-    padding: 1.75rem;
-    border: 1px solid #e2e8f0;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03);
-    transition: all 0.25s ease;
-}
-.article-card:hover {
-    box-shadow: 0 12px 20px -5px rgba(0, 0, 0, 0.08);
-    transform: translateY(-2px);
-    border-color: #cbd5e1;
-}
-.art-title {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: #0f172a;
-    text-decoration: none;
-    display: block;
-    line-height: 1.4;
-    margin-bottom: 0.75rem;
-    transition: color 0.2s;
-}
-.art-title:hover {
-    color: #2563eb;
-}
-.art-meta {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    flex-wrap: wrap;
-    color: #64748b;
-    font-size: 0.9rem;
-    margin-bottom: 1.25rem;
-}
-.art-meta-item {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-}
-.art-meta-item i {
-    color: #94a3b8;
-}
-.art-actions {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding-top: 1.25rem;
-    border-top: 1px solid #f1f5f9;
-}
-.art-btn {
-    display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 0.5rem;
-    padding: 0.5rem 1.25rem;
-    border-radius: 8px;
-    font-size: 0.875rem;
+    color: white;
+    text-align: center;
+    padding: 15px;
+    border-radius: 2px;
+}
+.ojs-issue-placeholder-title { font-size: 1.1rem; font-weight: bold; margin-bottom: 10px; }
+.ojs-issue-placeholder-year { font-size: 1.5rem; font-weight: 700; color: #fde68a; }
+
+.ojs-issue-meta {
+    flex-grow: 1;
+}
+.ojs-issue-meta p {
+    font-size: 1rem;
+    color: #1c1814;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+.ojs-meta-row {
+    font-size: 0.95rem;
+    margin-bottom: 0.8rem;
+    color: #1c1814;
+}
+
+/* Category grouping */
+.ojs-category-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #4b5563;
+    border-bottom: 1px solid #e5e7eb;
+    padding-bottom: 8px;
+    margin-top: 2.5rem;
+    margin-bottom: 1.5rem;
+    text-transform: uppercase;
+}
+
+/* Article item */
+.ojs-article-item {
+    margin-bottom: 2rem;
+}
+.ojs-article-title {
+    display: block;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #0ea5e9;
+    text-transform: uppercase;
+    text-decoration: none;
+    margin-bottom: 0.3rem;
+}
+.ojs-article-title:hover {
+    color: #0284c7;
+    text-decoration: none;
+}
+.ojs-article-authors-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 0.5rem;
+}
+.ojs-article-authors {
+    font-size: 0.95rem;
+    color: #4b5563;
+}
+.ojs-article-pages {
+    font-size: 0.9rem;
+    color: #6b7280;
+}
+.ojs-pdf-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border: 1px solid #0ea5e9;
+    color: #0ea5e9;
+    background: transparent;
+    border-radius: 4px;
+    font-size: 0.85rem;
     font-weight: 600;
     text-decoration: none;
+    transition: all 0.2s;
+}
+.ojs-pdf-btn:hover {
+    background: #e0f2fe;
+    color: #0369a1;
+}
+
+.admin-add-bar {
+    background: #1e293b;
     border: none;
-    cursor: pointer;
-    transition: all 0.2s ease;
+    padding: 0.85rem 1.25rem;
+    margin-bottom: 2rem;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
-.art-btn:active {
-    transform: scale(0.97);
+.admin-add-bar strong { color: #f8fafc; font-size: 0.95rem; display: flex; align-items: center; gap: 8px; }
+.admin-add-bar .btn {
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    padding: 8px 16px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+    border: none;
 }
-.art-btn-pdf {
-    background-color: #eff6ff;
-    color: #2563eb;
-    border: 1px solid #bfdbfe;
-}
-.art-btn-pdf:hover {
-    background-color: #dbeafe;
-}
-.art-btn-share {
-    background-color: #f8fafc;
-    color: #475569;
-    border: 1px solid #e2e8f0;
-}
-.art-btn-share:hover {
-    background-color: #f1f5f9;
-    color: #0f172a;
+.admin-add-bar .btn-primary { background: #3b82f6; color: white; }
+.admin-add-bar .btn-primary:hover { background: #2563eb; transform: translateY(-1px); }
+.admin-add-bar .btn-outline-dark { background: rgba(255,255,255,0.1); color: #f8fafc; border: 1px solid rgba(255,255,255,0.2); }
+.admin-add-bar .btn-outline-dark:hover { background: rgba(255,255,255,0.2); color: white; transform: translateY(-1px); }
+
+@media (max-width: 768px) {
+    .ojs-issue-header { flex-direction: column; gap: 1.5rem; }
+    .ojs-issue-cover { width: 160px; margin: 0 auto; }
 }
 </style>
 {% endblock %}
@@ -123,68 +166,111 @@
 {% block content %}
 <div class="issue-hero">
     <div class="container">
-        <h1 class="issue-hero-title">VOL. {{ journal.source_number }} NO. {{ journal.source_number }}</h1>
-        <div class="issue-hero-subtitle">{{ journal.year_category.year|default:"-" }}-YIL</div>
+        <div class="mb-3" style="font-size: 0.9rem; color: #4b5563;">
+            <a href="/" style="color:#0ea5e9;text-decoration:none;">Bosh Sahifa</a> /
+            <a href="{% url 'journal:journal_list' %}" style="color:#0ea5e9;text-decoration:none;">Arxivlar</a> /
+            Jild {{ journal.year_category.year|stringformat:".2s"|default:"X" }} Raq. {{ journal.source_number }} ({{ journal.year_category.year }}): SURXONDARYO ILM VA TAFAKKUR
+        </div>
+        
+        <h1 class="issue-hero-title">Jild {{ journal.year_category.year|stringformat:".2s"|default:"X" }} Raq. {{ journal.source_number }} ({{ journal.year_category.year }}): SURXONDARYO ILM VA TAFAKKUR JURNALI</h1>
     </div>
 </div>
 
-<div class="container">
-    <div class="article-list">
-        {% for article in articles %}
-        <div class="article-card">
-            <a href="{{ article.get_absolute_url }}" class="art-title">
-                {{ article.title }}
-            </a>
+<div class="container pb-5">
+    {% if is_admin %}
+    <div class="admin-add-bar">
+        <strong><i class="fa fa-shield-halved"></i> Boshqaruv:</strong>
+        <a href="{% url 'journal:article_create' %}?journal={{ journal.id }}" class="btn btn-primary">
+            <i class="fa fa-plus"></i> Yangi maqola qo'shish
+        </a>
+        <a href="{% url 'journal:journal_update' journal.id %}" class="btn btn-outline-dark">
+            <i class="fa fa-pen"></i> Jurnalni tahrirlash
+        </a>
+    </div>
+    {% endif %}
+
+    <div class="ojs-issue-header">
+        <div class="ojs-issue-cover">
+            {% if journal.image %}
+                <img src="{{ journal.image.url }}" alt="Muqova">
+            {% else %}
+                <div class="ojs-issue-placeholder">
+                    <div class="ojs-issue-placeholder-title">TAMADDUN NURI</div>
+                    <div class="ojs-issue-placeholder-year">{{ journal.year_category.year }}-yil</div>
+                    <div style="font-size: 0.9rem;">{{ journal.source_number }}-son</div>
+                </div>
+            {% endif %}
+        </div>
+        <div class="ojs-issue-meta">
+            <p>Ilmiy, ijtimoiy-falsafiy, madaniy-ma'rifiy,<br>adabiy-badiiy jurnal</p>
             
-            <div class="art-meta">
-                {% if article.authors %}
-                <div class="art-meta-item">
-                    <i class="fa fa-user-pen"></i>
-                    {{ article.authors }}
-                </div>
-                {% endif %}
-                <div class="art-meta-item">
-                    <i class="fa fa-calendar-alt"></i>
-                    {{ article.created_at|date:"M d, Y" }}
-                </div>
+            <div class="ojs-meta-row">
+                <strong>DOI:</strong> <a href="{{ request.build_absolute_uri }}" style="color:#0ea5e9;text-decoration:underline;">https://doi.org/10.37547/surxon.v{{ journal.year_category.year|default:"0000" }}.i{{ journal.source_number|default:"0" }}</a>
+            </div>
+            <div class="ojs-meta-row">
+                <strong>Nashr qilingan:</strong> {{ journal.created_at|date:"Y-m-d" }}
             </div>
             
-            <!-- Actions -->
-            <div class="art-actions">
-                {% if article.pdf_file %}
-                <a href="{{ article.pdf_file.url }}" target="_blank" class="art-btn art-btn-pdf">
-                    <i class="fa fa-file-pdf"></i> PDF
+            {% if journal.file %}
+            <div class="mt-4">
+                <a href="{{ journal.file.url }}" class="ojs-pdf-btn" target="_blank">
+                    <i class="fa fa-file-pdf"></i> To'liq Jurnal PDF
                 </a>
-                {% endif %}
-                
-                <button onclick="shareLink('{{ request.scheme }}://{{ request.get_host }}{{ article.get_absolute_url }}', '{{ article.title|escapejs }}')" class="art-btn art-btn-share">
-                    <i class="fa fa-share-nodes"></i> Ulashish
-                </button>
             </div>
+            {% endif %}
         </div>
+    </div>
+
+    <!-- Regroup articles by category -->
+    {% regroup articles by category as grouped_articles %}
+    
+    <div class="ojs-articles-list">
+        {% for group in grouped_articles %}
+            <div class="ojs-category-title">
+                {% if group.grouper %}{{ group.grouper.name|default:"Umumiy" }}{% else %}Umumiy maqolalar{% endif %}
+            </div>
+            
+            {% for article in group.list %}
+            <div class="ojs-article-item">
+                <a href="{{ article.get_absolute_url }}" class="ojs-article-title">{{ article.title }}</a>
+                
+                <div class="ojs-article-authors-row">
+                    <div class="ojs-article-authors">
+                        {{ article.authors|default:"Muallif ko'rsatilmagan" }}
+                    </div>
+                    <div class="ojs-article-pages">
+                        {{ article.pages|default:"" }}
+                    </div>
+                </div>
+                
+                <div class="ojs-article-actions d-flex align-items-center gap-3">
+                    {% if article.pdf_file %}
+                    <a href="{{ article.pdf_file.url }}" class="ojs-pdf-btn" target="_blank">
+                        <i class="fa fa-file-pdf"></i> PDF
+                    </a>
+                    {% else %}
+                    <a href="{{ article.get_absolute_url }}" class="ojs-pdf-btn">
+                        <i class="fa fa-file-alt"></i> Ko'rish
+                    </a>
+                    {% endif %}
+                    
+                    {% if is_admin %}
+                        <a href="{{ article.get_update_url }}" class="text-muted" style="font-size:0.85rem;"><i class="fa fa-pen"></i> Tahrirlash</a>
+                        <form action="{% url 'journal:article_archive_toggle' article.id %}" method="post" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="text-muted" style="border:none;background:none;font-size:0.85rem;">
+                                <i class="fa fa-box-archive"></i> {% if article.is_archived %}Chiqarish{% else %}Arxivlash{% endif %}
+                            </button>
+                        </form>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+            
         {% empty %}
-        <div class="text-center py-5" style="color: #94a3b8;">
-            <i class="fa fa-file-excel mb-3" style="font-size: 3rem; opacity: 0.5;"></i>
-            <h4 style="font-weight: 600;">{% trans "Ushbu jurnal sonida hozircha maqolalar yo'q." %}</h4>
-        </div>
+            <p class="text-muted">{% blocktrans %}Bu sonda hali maqolalar yo'q.{% endblocktrans %}</p>
         {% endfor %}
     </div>
-</div>
 
-<script>
-function shareLink(url, title) {
-    if (navigator.share) {
-        navigator.share({
-            title: title,
-            url: url
-        }).catch(console.error);
-    } else {
-        navigator.clipboard.writeText(url).then(() => {
-            alert("Maqola linki nusxalandi! Endi uni xohlagan joyga tashlashingiz mumkin.");
-        }).catch(err => {
-            console.error("Xatolik: ", err);
-        });
-    }
-}
-</script>
-{% endblock %}
+</div>
+{% endblock content %}

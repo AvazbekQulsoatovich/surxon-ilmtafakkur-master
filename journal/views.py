@@ -12,6 +12,7 @@ from django.http import Http404
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.core.mail import send_mail
 from django.conf import settings
+from django.utils.text import slugify
 
 from django.http import HttpRequest, HttpResponseForbidden, HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
@@ -25,13 +26,15 @@ from .forms import ContactForm, ArticleForm, PostForm, JournalForm, SocialForm, 
 
 
 def main_page(request: HttpRequest):
-    # get_or_save_statistic(request)
-    posts = Post.objects.all()[:2]
-    articles = Article.objects.all()[:3]
+    posts = Post.objects.all().order_by('-created_at')[:3]
+    articles = Article.objects.select_related('category', 'journal', 'journal__year_category').order_by('-created_at')[:6]
+    latest_journals = Journal.objects.select_related('year_category').order_by('-created_at')[:3]
 
     context = {
         'posts': posts,
-        'articles': articles
+        'articles': articles,
+        'latest_journals': latest_journals,
+        'is_admin': _is_admin(request),
     }
 
     return render(request,
@@ -42,9 +45,9 @@ def main_page(request: HttpRequest):
 from .models import YearCategory
 
 def journal_list(request: HttpRequest):
-    years = YearCategory.objects.filter(is_active=True).order_by('-year')
+    journals = Journal.objects.select_related('year_category').order_by('-year_category__year', '-source_number')
     return render(request, 'journal/journal/list.html', {
-        'years': years,
+        'journals': journals,
         'is_admin': _is_admin(request),
     })
 
@@ -60,7 +63,7 @@ def year_detail(request: HttpRequest, id):
 
 @login_required
 def year_create(request: HttpRequest):
-    if not (request.user.is_superuser or request.profile.is_admin):
+    if not _is_admin(request):
         return HttpResponseForbidden()
     if request.method == 'POST':
         form = YearCategoryForm(data=request.POST)
@@ -74,7 +77,7 @@ def year_create(request: HttpRequest):
 
 @login_required
 def year_update(request: HttpRequest, id):
-    if not (request.user.is_superuser or request.profile.is_admin):
+    if not _is_admin(request):
         return HttpResponseForbidden()
     year_cat = get_object_or_404(YearCategory, id=id)
     if request.method == 'POST':
@@ -89,7 +92,7 @@ def year_update(request: HttpRequest, id):
 
 @login_required
 def year_delete(request: HttpRequest, id):
-    if not (request.user.is_superuser or request.profile.is_admin):
+    if not _is_admin(request):
         return HttpResponseForbidden()
     year_cat = get_object_or_404(YearCategory, id=id)
     if request.method == 'POST':
@@ -98,11 +101,8 @@ def year_delete(request: HttpRequest, id):
     return render(request, 'journal/year/delete.html', {'year': year_cat})
 
 def journal_detail(request: HttpRequest, id):
-    from django.shortcuts import get_object_or_404
     journal = get_object_or_404(Journal, pk=id)
-    # Get articles belonging to this journal
-    articles = journal.articles.all().order_by('created_at')
-
+    articles = journal.articles.select_related('category').order_by('pages', 'created_at')
     return render(request, 'journal/journal/detail.html', {
         'journal': journal,
         'articles': articles,
@@ -112,7 +112,7 @@ def journal_detail(request: HttpRequest, id):
 
 @login_required
 def journal_create(request: HttpRequest):
-    if not (request.user.is_superuser or request.profile.is_admin):
+    if not _is_admin(request):
         return HttpResponseForbidden()
     if request.method == 'POST':
         form = JournalForm(data=request.POST,
@@ -129,7 +129,7 @@ def journal_create(request: HttpRequest):
 
 @login_required
 def journal_update(request: HttpRequest, id):
-    if not (request.user.is_superuser or request.profile.is_admin):
+    if not _is_admin(request):
         return HttpResponseForbidden()
 
     journal = get_object_or_404(Journal,
@@ -153,7 +153,7 @@ def journal_update(request: HttpRequest, id):
 
 @login_required
 def journal_delete(request: HttpRequest, id):
-    if not (request.user.is_superuser or request.profile.is_admin):
+    if not _is_admin(request):
         return HttpResponseForbidden()
 
     journal = get_object_or_404(Journal,
@@ -248,7 +248,7 @@ def message_list(request: HttpRequest):
 @login_required
 @require_POST
 def message_delete_all(request: HttpRequest):
-    if not (request.user.is_superuser or request.profile.is_admin):
+    if not _is_admin(request):
         return HttpResponseForbidden()
     messages = Contact.objects.filter(is_read=True)
     messages.delete()
@@ -286,7 +286,7 @@ def maxfiylik_siyosati(request: HttpRequest):
 
 @login_required
 def sitepage_update(request: HttpRequest, page_type):
-    if not request.user.is_superuser:
+    if not _is_admin(request):
         return HttpResponseForbidden()
     page, created = SitePage.objects.get_or_create(
         page_type=page_type,
@@ -396,7 +396,7 @@ def article_list(request: HttpRequest):
 @login_required
 @require_POST
 def article_archive_toggle(request: HttpRequest, id):
-    if not (request.user.is_superuser or request.profile.is_admin):
+    if not _is_admin(request):
         return HttpResponseForbidden()
     article = get_object_or_404(Article, id=id)
     article.is_archived = not article.is_archived
@@ -719,7 +719,7 @@ def article_band_delete(request: HttpRequest, band_id):
 
 @login_required
 def article_create(request: HttpRequest):
-    if not request.user.is_superuser:
+    if not _is_admin(request):
         return HttpResponseForbidden()
 
     if request.method == 'POST':
@@ -751,6 +751,12 @@ def article_create(request: HttpRequest):
                 article.slug = slugify(article.title)
             article.save()
 
+            if not article.doi:
+                year_str = article.journal.year_category.year if article.journal and article.journal.year_category else "0000"
+                issue_str = article.journal.source_number if article.journal else "0"
+                article.doi = f"https://doi.org/10.37547/surxon-{year_str}-{issue_str}-{article.id}"
+                article.save(update_fields=['doi'])
+
             for f in request.FILES.getlist('additional_pdfs'):
                 from journal.models import ArticleFile
                 ArticleFile.objects.create(article=article, title=f.name, pdf_file=f)
@@ -759,7 +765,10 @@ def article_create(request: HttpRequest):
                             slug=article.slug,
                             id=article.id)
     else:
-        form = ArticleForm()
+        initial = {}
+        if request.GET.get('journal'):
+            initial['journal'] = request.GET.get('journal')
+        form = ArticleForm(initial=initial)
 
     context = {
         'form': form
@@ -772,7 +781,7 @@ def article_create(request: HttpRequest):
 
 # @login_required
 # def editorial_create(request: HttpRequest):
-#     if not request.user.is_superuser:
+#     if not _is_admin(request):
 #         return HttpResponseForbidden()
 #
 #     if request.method == 'POST':
@@ -801,7 +810,7 @@ def article_update(request: HttpRequest, slug, id):
     article = get_object_or_404(Article,
                                 slug=slug, id=id)
 
-    if not request.user.is_superuser:
+    if not _is_admin(request):
         return HttpResponseForbidden()
 
     if request.method == 'POST':
@@ -829,7 +838,15 @@ def article_update(request: HttpRequest, slug, id):
                 except Exception:
                     pass
 
+            if not article.slug:
+                article.slug = slugify(article.title)
             article.save()
+
+            if not article.doi:
+                year_str = article.journal.year_category.year if article.journal and article.journal.year_category else "0000"
+                issue_str = article.journal.source_number if article.journal else "0"
+                article.doi = f"https://doi.org/10.37547/surxon-{year_str}-{issue_str}-{article.id}"
+                article.save(update_fields=['doi'])
 
             for f in request.FILES.getlist('additional_pdfs'):
                 from journal.models import ArticleFile
@@ -850,7 +867,7 @@ def article_update(request: HttpRequest, slug, id):
 def editorial_update(request: HttpRequest, id):
     editorial = get_object_or_404(Editorial, id=id)
 
-    if not request.user.is_superuser:
+    if not _is_admin(request):
         return HttpResponseForbidden()
 
     if request.method == 'POST':
@@ -867,7 +884,7 @@ def editorial_update(request: HttpRequest, id):
 
 @login_required
 def about_article_update(request: HttpRequest, id):
-    if not request.user.is_superuser:
+    if not _is_admin(request):
         return HttpResponseForbidden()
     about = get_object_or_404(About, id=id)
 
@@ -912,7 +929,7 @@ def dashboard(request: HttpRequest):
 
 @login_required
 def sending_article_update(request: HttpRequest, id):
-    if not request.user.is_superuser:
+    if not _is_admin(request):
         return HttpResponseForbidden()
     article = get_object_or_404(SendingArticle, id=id)
 
@@ -932,7 +949,7 @@ def article_delete(request: HttpRequest, slug, id):
     article = get_object_or_404(Article,
                                 slug=slug,
                                 id=id)
-    if not request.user.is_superuser:
+    if not _is_admin(request):
         return HttpResponseForbidden()
 
     if request.method == 'POST':
@@ -947,7 +964,7 @@ def article_delete(request: HttpRequest, slug, id):
 def editorial_delete(request: HttpRequest, id):
     editorial = get_object_or_404(Editorial, id=id)
 
-    if not request.user.is_superuser:
+    if not _is_admin(request):
         return HttpResponseForbidden()
 
     if request.method == 'POST':
@@ -959,7 +976,7 @@ def editorial_delete(request: HttpRequest, id):
 
 @login_required
 def social_media_list(request: HttpRequest):
-    if not (request.user.is_superuser or request.profile.is_admin):
+    if not _is_admin(request):
         return HttpResponseForbidden()
     social_media = SocialMedia.objects.all()
 
@@ -969,7 +986,7 @@ def social_media_list(request: HttpRequest):
 
 @login_required
 def social_media_create(request: HttpRequest):
-    if not (request.user.is_superuser or request.profile.is_admin):
+    if not _is_admin(request):
         return HttpResponseForbidden()
 
     if request.method == 'POST':
@@ -987,7 +1004,7 @@ def social_media_create(request: HttpRequest):
 
 @login_required
 def social_media_update(request: HttpRequest, id):
-    if not (request.user.is_superuser or request.profile.is_admin):
+    if not _is_admin(request):
         return HttpResponseForbidden()
     social_media = get_object_or_404(SocialMedia, id=id)
 
@@ -1009,7 +1026,7 @@ def social_media_update(request: HttpRequest, id):
 
 @login_required
 def social_media_delete(request: HttpRequest, id):
-    if not (request.user.is_superuser or request.profile.is_admin):
+    if not _is_admin(request):
         return HttpResponseForbidden()
 
     social_media = get_object_or_404(SocialMedia, id=id)
@@ -1106,7 +1123,7 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 @login_required
 def PostDeleteView(request: HttpRequest, slug, id):
     post = get_object_or_404(Post, slug=slug, id=id)
-    if not request.user.is_superuser:
+    if not _is_admin(request):
         return HttpResponseForbidden()
     if request.method == 'POST':
         post.delete()
@@ -1119,7 +1136,7 @@ def PostDeleteView(request: HttpRequest, slug, id):
 # ──────────────────────────────────────────────────────────
 @login_required
 def category_list(request: HttpRequest):
-    if not (request.user.is_superuser or request.profile.is_admin):
+    if not _is_admin(request):
         return HttpResponseForbidden()
     cats = Category.objects.annotate(count=models.Count('articles'))
     return render(request, 'journal/category/list.html', {'categories': cats})
@@ -1127,7 +1144,7 @@ def category_list(request: HttpRequest):
 
 @login_required
 def category_create(request: HttpRequest):
-    if not (request.user.is_superuser or request.profile.is_admin):
+    if not _is_admin(request):
         return HttpResponseForbidden()
     if request.method == 'POST':
         form = CategoryForm(request.POST)
@@ -1142,7 +1159,7 @@ def category_create(request: HttpRequest):
 
 @login_required
 def category_update(request: HttpRequest, id):
-    if not (request.user.is_superuser or request.profile.is_admin):
+    if not _is_admin(request):
         return HttpResponseForbidden()
     cat = get_object_or_404(Category, id=id)
     if request.method == 'POST':
@@ -1158,7 +1175,7 @@ def category_update(request: HttpRequest, id):
 
 @login_required
 def category_delete(request: HttpRequest, id):
-    if not (request.user.is_superuser or request.profile.is_admin):
+    if not _is_admin(request):
         return HttpResponseForbidden()
     cat = get_object_or_404(Category, id=id)
     if request.method == 'POST':

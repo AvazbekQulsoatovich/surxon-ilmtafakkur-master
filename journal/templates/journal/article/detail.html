@@ -1,262 +1,527 @@
 {% extends 'base.html' %}
+{% load static %}
 {% load i18n %}
 
-{% block title %}{{ article.title }}{% endblock %}
+{% block title %}{{ article.title }} | Surxondaryo Ilm va Tafakkur{% endblock %}
 
 {% block style %}
 <style>
-.article-container {
-    background-color: #fff;
-    padding: 50px 60px;
-    margin: 40px auto;
-    border-radius: 2px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-    font-family: "Times New Roman", Times, serif;
-    color: #000;
-}
-.article-header-meta {
-    font-family: Arial, sans-serif;
-    font-size: 15px;
-    color: #4b5563;
-    margin-bottom: 25px;
-}
-.article-header-meta a {
-    color: #2563eb;
-    text-decoration: none;
-}
-.article-header-meta a:hover {
-    text-decoration: underline;
-}
-.article-title-text {
-    font-family: Arial, sans-serif;
-    font-size: 24px;
-    font-weight: bold;
-    text-transform: uppercase;
-    margin-bottom: 15px;
-    color: #111;
-    line-height: 1.4;
-}
-.article-authors-text {
-    font-family: Arial, sans-serif;
-    font-size: 16px;
-    color: #2563eb;
-    margin-bottom: 30px;
-    font-weight: bold;
-}
-.article-authors-text a {
-    color: #2563eb;
-    text-decoration: none;
-}
-.article-authors-text a:hover {
-    text-decoration: underline;
-}
-.article-info-box {
-    font-family: Arial, sans-serif;
-    border-top: 1px solid #d1d5db;
-    border-bottom: 1px solid #d1d5db;
-    padding: 15px 0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 40px;
-}
-.info-box-left {
-    display: flex;
-    flex-grow: 1;
-}
-.info-column {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    flex: 1;
-}
-.info-label {
-    font-size: 15px;
-    color: #111;
-    font-weight: bold;
-}
-.info-value {
-    font-size: 15px;
-    color: #374151;
-    margin-top: 5px;
-}
-.pdf-btn {
-    background-color: #b48600;
+/* ══ Article Hero ══ */
+.art-hero {
+    background: linear-gradient(135deg, #1c1814 0%, #2d2520 100%);
+    border-bottom: 3px solid #c8a84b;
+    padding: 2rem 0 1.5rem;
     color: #fff;
-    border: none;
-    padding: 12px 25px;
-    font-family: Arial, sans-serif;
-    font-weight: normal;
-    font-size: 18px;
+}
+.art-breadcrumb {
+    font-size: 0.82rem;
+    color: rgba(255,255,255,0.55);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 0.75rem;
+    flex-wrap: wrap;
+}
+.art-breadcrumb a {
+    color: rgba(255,255,255,0.6);
     text-decoration: none;
+    transition: color 0.15s;
+}
+.art-breadcrumb a:hover { color: #c8a84b; }
+.art-badge-open {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: rgba(34,197,94,0.15);
+    color: #4ade80;
+    border: 1px solid rgba(34,197,94,0.25);
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+.art-doi-link {
+    font-size: 0.82rem;
+    color: rgba(200,168,75,0.9);
+    text-decoration: none;
+    margin-bottom: 0.75rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+.art-doi-link:hover { color: #c8a84b; text-decoration: underline; }
+.art-title {
+    font-family: 'Merriweather', serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.35;
+    margin-bottom: 0.75rem;
+    max-width: 820px;
+}
+.art-authors {
+    font-size: 0.95rem;
+    color: #93c5fd;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* ══ Info Box ══ */
+.art-info-box {
+    background: #fff;
+    border: 1px solid rgba(28,24,20,0.09);
+    border-radius: 12px;
+    padding: 1.25rem 1.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    box-shadow: 0 2px 12px rgba(12,9,6,0.06);
+    margin: 1.5rem 0;
+}
+.art-info-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.75rem;
+}
+.art-info-item { display: flex; flex-direction: column; gap: 2px; }
+.art-info-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #8a8078;
+}
+.art-info-value {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #1c1814;
+}
+.art-info-value a {
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: 600;
+}
+.art-info-value a:hover { text-decoration: underline; }
+.btn-download-pdf {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    transition: 0.2s;
-    margin-left: 20px;
+    background: linear-gradient(135deg, #c8a84b, #b48600);
+    color: #fff;
+    font-size: 0.88rem;
+    font-weight: 700;
+    padding: 10px 22px;
+    border-radius: 9px;
+    text-decoration: none;
+    border: none;
+    box-shadow: 0 4px 15px rgba(200,168,75,0.35);
+    transition: all 0.2s;
+    white-space: nowrap;
 }
-.pdf-btn:hover {
-    background-color: #936d00;
+.btn-download-pdf:hover {
+    background: linear-gradient(135deg, #b48600, #9a7000);
+    box-shadow: 0 6px 20px rgba(200,168,75,0.45);
+    transform: translateY(-1px);
     color: #fff;
 }
-.section-title {
-    font-family: Arial, sans-serif;
-    font-size: 22px;
-    font-weight: bold;
-    margin: 35px 0 15px 0;
-    color: #000;
+
+/* ══ Category chip ══ */
+.cat-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    margin-bottom: 1rem;
+    margin-top: 0.5rem;
 }
-.section-content {
-    font-size: 16px;
-    line-height: 1.6;
-    color: #000;
-    text-align: justify;
+
+/* ══ Sections ══ */
+.art-section {
+    background: #fff;
+    border: 1px solid rgba(28,24,20,0.08);
+    border-radius: 12px;
+    padding: 1.5rem 1.75rem;
+    margin-bottom: 1.25rem;
 }
-.section-content p {
-    margin-bottom: 15px;
-}
-.admin-actions-bar {
-    background-color: #f8fafc;
-    border: 1px solid #e2e8f0;
-    padding: 15px;
-    border-radius: 8px;
-    margin-top: 60px;
+.art-section-heading {
+    font-family: 'Merriweather', serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #1c1814;
+    padding-bottom: 0.6rem;
+    border-bottom: 2px solid rgba(200,168,75,0.3);
+    margin-bottom: 1rem;
     display: flex;
-    justify-content: flex-end;
+    align-items: center;
+    gap: 8px;
+}
+.art-section-heading i { color: #c8a84b; }
+.art-abstract {
+    font-size: 0.95rem;
+    color: #2d2520;
+    line-height: 1.75;
+    font-style: italic;
+}
+.art-keywords {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 0.5rem;
+}
+.kw-tag {
+    background: rgba(200,168,75,0.1);
+    color: #b48600;
+    border: 1px solid rgba(200,168,75,0.3);
+    padding: 4px 14px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+.art-references {
+    font-size: 0.88rem;
+    color: #4d4840;
+    line-height: 1.65;
+    white-space: pre-line;
+}
+.art-content {
+    font-size: 0.95rem;
+    color: #2d2520;
+    line-height: 1.8;
+}
+
+/* ══ Stats ══ */
+.art-stats {
+    background: #f8f7f4;
+    border: 1px solid rgba(28,24,20,0.07);
+    border-radius: 10px;
+    padding: 1rem 1.5rem;
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.25rem;
+}
+.art-stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+}
+.art-stat-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1c1814;
+}
+.art-stat-label {
+    font-size: 0.75rem;
+    color: #8a8078;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+/* ══ How to cite ══ */
+.cite-box {
+    background: #f0ece3;
+    border-left: 4px solid #c8a84b;
+    border-radius: 0 8px 8px 0;
+    padding: 1rem 1.25rem;
+    font-size: 0.85rem;
+    color: #2d2520;
+    font-style: italic;
+    line-height: 1.65;
+    position: relative;
+}
+.cite-copy-btn {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    background: #c8a84b;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.cite-copy-btn:hover { background: #b48600; }
+
+/* ══ Creative Commons ══ */
+.cc-box {
+    display: flex;
+    align-items: center;
     gap: 10px;
+    font-size: 0.82rem;
+    color: #4d4840;
+    padding: 0.75rem 0;
+}
+.cc-badge {
+    background: #e5e3e0;
+    border-radius: 6px;
+    padding: 3px 10px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #1c1814;
+}
+
+/* ══ Admin actions ══ */
+.art-admin-bar {
+    background: #1e293b;
+    border: none;
+    padding: 0.85rem 1.25rem;
+    margin-bottom: 2rem;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+.art-admin-bar strong { color: #f8fafc; font-size: 0.95rem; display: flex; align-items: center; gap: 8px; margin-right: 5px; }
+.btn-art-action {
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    padding: 8px 16px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+    border: none;
+    text-decoration: none;
+}
+.btn-act-edit { background: #3b82f6; color: white; }
+.btn-act-edit:hover { background: #2563eb; color: white; transform: translateY(-1px); text-decoration: none; }
+.btn-act-archive { background: rgba(255,255,255,0.1); color: #f8fafc; border: 1px solid rgba(255,255,255,0.2); }
+.btn-act-archive:hover { background: rgba(255,255,255,0.2); color: white; transform: translateY(-1px); }
+.btn-act-delete { background: #ef4444; color: white; }
+.btn-act-delete:hover { background: #dc2626; color: white; transform: translateY(-1px); text-decoration: none; }
+
+@media (max-width: 576px) {
+    .art-title { font-size: 1.2rem; }
+    .art-info-box { flex-direction: column; align-items: flex-start; }
+    .btn-download-pdf { width: 100%; justify-content: center; }
 }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-lg-10">
-            <div class="article-container">
-                
-                <div class="article-header-meta">
-                    <i class="fa fa-unlock-alt" style="color: #f97316; font-size: 18px;"></i> 
-                    Articles | Open Access 
-                    {% if article.doi %}
-                    | DOI: <a href="{{ article.doi }}" target="_blank">{{ article.doi }}</a>
-                    {% endif %}
-                </div>
-
-                <h1 class="article-title-text">{{ article.title }}</h1>
-                
-                <div class="article-authors-text">
-                    {% if article.authors %}
-                        {{ article.authors }} ,
-                    {% else %}
-                        Kiritilmagan
-                    {% endif %}
-                </div>
-
-                <div class="article-info-box">
-                    <div class="info-box-left">
-                        <div class="info-column">
-                            <span class="info-label">Published Date</span>
-                            <span class="info-value">{{ article.created_at|date:"Y-m-d" }}</span>
-                        </div>
-                        <div class="info-column" style="border-left: 1px solid #e5e7eb;">
-                            <span class="info-label">Pages</span>
-                            <span class="info-value">{{ article.pages|default:"-" }}</span>
-                        </div>
-                    </div>
-                    
-                    {% if article.pdf_file %}
-                    <a href="{{ article.pdf_file.url }}" target="_blank" class="pdf-btn">
-                        <i class="fa-regular fa-file-pdf"></i> PDF <i class="fa fa-download ms-1"></i>
-                    </a>
-                    {% endif %}
-                </div>
-
-                {% if article.abstract %}
-                <h2 class="section-title">Abstract</h2>
-                <div class="section-content">
-                    {{ article.abstract|safe }}
-                </div>
-                {% endif %}
-
-                {% if article.keywords %}
-                <h2 class="section-title">Keywords</h2>
-                <div class="section-content">
-                    {{ article.keywords }}
-                </div>
-                {% endif %}
-
-                {% if article.references %}
-                <h2 class="section-title">References</h2>
-                <div class="section-content">
-                    {{ article.references|safe }}
-                </div>
-                {% endif %}
-                
-                {% if article.content and article.content != 'None' and not article.abstract %}
-                <div class="section-content mt-4">
-                    {{ article.content|safe }}
-                </div>
-                {% endif %}
-
-                <!-- Article Statistics -->
-                <hr style="margin-top: 40px; border-color: #d1d5db;">
-                <h2 class="section-title" style="margin-top: 15px; margin-bottom: 15px;">Article Statistics</h2>
-                <hr style="border-color: #d1d5db; margin-bottom: 30px;">
-
-                <!-- Copyright License -->
-                <h2 class="section-title">Copyright License</h2>
-                <div class="section-content">
-                    <p style="margin-bottom: 10px;">Copyright (c) {{ article.created_at|date:"Y" }} {{ article.authors|default:"Muallif" }}</p>
-                    <p>
-                        <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">
-                            <img alt="Creative Commons License" style="border-width:0; margin-bottom: 5px;" src="https://i.creativecommons.org/l/by/4.0/88x31.png" />
-                        </a><br />
-                        This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/" style="color: #2563eb; text-decoration: none;">Creative Commons Attribution 4.0 International License</a>.
-                    </p>
-                </div>
-
-                <!-- Download Citations -->
-                <h2 class="section-title" style="margin-top: 40px;">Download Citations</h2>
-                <div class="citation-box" style="background-color: #f8f9fa; border: 1px solid #e9ecef; padding: 25px; margin-top: 15px; font-family: 'Times New Roman', Times, serif;">
-                    <h4 style="font-weight: bold; font-size: 18px; margin-bottom: 15px; color: #000;">How to Cite</h4>
-                    <p style="font-size: 15.5px; margin-bottom: 15px; line-height: 1.6; color: #000;">
-                        {% if article.authors %}{{ article.authors }}.{% endif %} ({{ article.created_at|date:"Y" }}). 
-                        {{ article.title }}. <i>Surxon Ilm-Tafakkuri</i>{% if article.journal %}, {{ article.journal.name }}{% endif %}{% if article.pages %}, {{ article.pages }}{% endif %}.
-                        {% if article.doi %}{{ article.doi }}{% endif %}
-                    </p>
-                    <button style="background: transparent; border: 2px solid #000; padding: 6px 15px; font-weight: bold; font-size: 15px; color: #000; cursor: pointer; margin-bottom: 25px;">Download Citation</button>
-
-                    <div class="citation-download-options" style="background-color: #fff; border: 1px solid #e9ecef; border-radius: 2px;">
-                        <div style="padding: 15px; border-bottom: 1px solid #e9ecef; font-weight: bold; font-size: 16px; color: #000;">
-                            Download Citation
-                        </div>
-                        <div style="padding: 15px; font-family: Arial, sans-serif;">
-                            <a href="#" style="display: block; color: #2563eb; text-decoration: none; margin-bottom: 15px; font-size: 15px;">Endnote/Zotero/Mendeley (RIS)</a>
-                            <a href="#" style="display: block; color: #2563eb; text-decoration: none; font-size: 15px;">BibTeX</a>
-                        </div>
-                    </div>
-                </div>
-
-                {% if request.user.is_superuser or is_admin %}
-                <div class="admin-actions-bar">
-                    <a href="{{ article.get_update_url }}" class="btn btn-sm btn-outline-primary" style="font-weight: 600;">
-                        <i class="fa fa-pen"></i> Tahrirlash
-                    </a>
-                    <form method="post" action="{% url 'journal:article_archive_toggle' article.id %}" class="m-0 p-0" style="display: inline-block;">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-sm btn-outline-dark" style="font-weight: 600;">
-                            <i class="fa fa-archive"></i>
-                            {% if article.is_archived %}Arxivdan chiqarish{% else %}Arxivga qo'shish{% endif %}
-                        </button>
-                    </form>
-                    <a href="{{ article.get_delete_url }}" class="btn btn-sm btn-outline-danger" style="font-weight: 600;">
-                        <i class="fa fa-trash"></i> O'chirish
-                    </a>
-                </div>
-                {% endif %}
-
-            </div>
+<!-- Article Hero -->
+<div class="art-hero">
+    <div class="container">
+        <div class="art-breadcrumb">
+            <a href="{% url 'journal:journal_list' %}"><i class="fa fa-archive me-1"></i>{% blocktrans %}Arxiv{% endblocktrans %}</a>
+            <i class="fa fa-chevron-right" style="font-size:0.65rem;"></i>
+            {% if article.journal %}
+            <a href="{% url 'journal:journal_detail' article.journal.id %}">{{ article.journal.source_number }}-son ({{ article.journal.year_category.year }})</a>
+            <i class="fa fa-chevron-right" style="font-size:0.65rem;"></i>
+            {% endif %}
+            <span>{% blocktrans %}Maqola{% endblocktrans %}</span>
+        </div>
+        <div class="art-badge-open"><i class="fa fa-lock-open"></i>Open Access</div>
+        {% if article.doi %}
+        <div class="mb-3">
+            <a href="{{ article.get_absolute_url }}" class="art-doi-link">
+                <i class="fa fa-link"></i>{{ article.doi }}
+            </a>
+        </div>
+        {% else %}
+        <div class="mb-3">
+            <a href="{{ request.build_absolute_uri }}" class="art-doi-link">
+                <i class="fa fa-link"></i>https://doi.org/10.37547/surxon-{{ article.journal.year_category.year|default:"0000" }}-{{ article.journal.source_number|default:"0" }}-{{ article.id|default:"0" }}
+            </a>
+        </div>
+        {% endif %}
+        <h1 class="art-title">{{ article.title }}</h1>
+        <div class="art-authors">
+            <i class="fa fa-user-pen"></i>{{ article.authors|default:"Muallif ko'rsatilmagan" }}
         </div>
     </div>
 </div>
-{% endblock %}
+
+<div class="container py-3">
+    <!-- Admin actions -->
+    {% if is_admin %}
+    <div class="art-admin-bar">
+        <strong><i class="fa fa-shield-halved"></i> Boshqaruv:</strong>
+        <a href="{{ article.get_update_url }}" class="btn-art-action btn-act-edit">
+            <i class="fa fa-pen"></i>Tahrirlash
+        </a>
+        <form action="{% url 'journal:article_archive_toggle' article.id %}" method="post" style="display:inline; margin: 0;">
+            {% csrf_token %}
+            <button type="submit" class="btn-art-action btn-act-archive" style="cursor:pointer;">
+                <i class="fa fa-box-archive"></i>
+                {% if article.is_archived %}Arxivdan chiqarish{% else %}Arxivlash{% endif %}
+            </button>
+        </form>
+        <a href="{{ article.get_delete_url }}" class="btn-art-action btn-act-delete">
+            <i class="fa fa-trash"></i>O'chirish
+        </a>
+    </div>
+    {% endif %}
+
+    {% if article.category %}
+    <span class="cat-chip" style="background:{{ article.category.color }}22;color:{{ article.category.color }};border:1px solid {{ article.category.color }}44;">
+        <i class="fa fa-tag"></i>{{ article.category.name }}
+    </span>
+    {% endif %}
+
+    <!-- Info box -->
+    <div class="art-info-box">
+        <div class="art-info-items">
+            <div class="art-info-item">
+                <span class="art-info-label"><i class="fa fa-calendar me-1"></i>{% blocktrans %}Nashr qilingan sana{% endblocktrans %}</span>
+                <span class="art-info-value">{{ article.created_at|date:"d F Y" }}</span>
+            </div>
+            {% if article.pages %}
+            <div class="art-info-item">
+                <span class="art-info-label"><i class="fa fa-bookmark me-1"></i>{% blocktrans %}Sahifalar{% endblocktrans %}</span>
+                <span class="art-info-value">{{ article.pages }}</span>
+            </div>
+            {% endif %}
+            {% if article.journal %}
+            <div class="art-info-item">
+                <span class="art-info-label"><i class="fa fa-journal-whills me-1"></i>{% blocktrans %}Jurnal{% endblocktrans %}</span>
+                <span class="art-info-value">
+                    <a href="{% url 'journal:journal_detail' article.journal.id %}">
+                        {{ article.journal.source_number }}-son ({{ article.journal.year_category.year }})
+                    </a>
+                </span>
+            </div>
+            {% endif %}
+            {% if article.doi %}
+            <div class="art-info-item">
+                <span class="art-info-label"><i class="fa fa-link me-1"></i>DOI</span>
+                <span class="art-info-value">
+                    <a href="{{ article.get_absolute_url }}">{{ article.doi|truncatechars:40 }}</a>
+                </span>
+            </div>
+            {% else %}
+            <div class="art-info-item">
+                <span class="art-info-label"><i class="fa fa-link me-1"></i>DOI</span>
+                <span class="art-info-value">
+                    <a href="{{ request.build_absolute_uri }}">https://doi.org/10.37547/surxon-{{ article.journal.year_category.year|default:"0000" }}-{{ article.journal.source_number|default:"0" }}-{{ article.id|default:"0" }}</a>
+                </span>
+            </div>
+            {% endif %}
+            <div class="art-info-item">
+                <span class="art-info-label"><i class="fa fa-eye me-1"></i>{% blocktrans %}Ko'rishlar{% endblocktrans %}</span>
+                <span class="art-info-value">{{ article.views }}</span>
+            </div>
+        </div>
+        {% if article.pdf_file %}
+        <a href="{{ article.pdf_file.url }}" target="_blank" class="btn-download-pdf">
+            <i class="fa fa-file-arrow-down"></i>{% blocktrans %}PDF Yuklab olish{% endblocktrans %}
+        </a>
+        {% endif %}
+    </div>
+
+    <!-- Abstract -->
+    {% if article.abstract %}
+    <div class="art-section" id="abstrakt">
+        <div class="art-section-heading">
+            <i class="fa fa-align-left"></i>{% blocktrans %}Abstrakt{% endblocktrans %}
+        </div>
+        <div class="art-abstract">{{ article.abstract }}</div>
+    </div>
+    {% endif %}
+
+    <!-- Keywords -->
+    {% if article.keywords %}
+    <div class="art-section">
+        <div class="art-section-heading">
+            <i class="fa fa-tags"></i>{% blocktrans %}Kalit so'zlar{% endblocktrans %}
+        </div>
+        <div class="art-keywords">
+            {% for kw in article.keywords.split %}
+            <span class="kw-tag">{{ kw|cut:"," }}</span>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Content -->
+    {% if article.content %}
+    <div class="art-section">
+        <div class="art-section-heading">
+            <i class="fa fa-book-open-reader"></i>{% blocktrans %}Maqola matni{% endblocktrans %}
+        </div>
+        <div class="art-content">{{ article.content|safe }}</div>
+    </div>
+    {% endif %}
+
+    <!-- References -->
+    {% if article.references %}
+    <div class="art-section">
+        <div class="art-section-heading">
+            <i class="fa fa-list-ol"></i>{% blocktrans %}Foydalanilgan adabiyotlar{% endblocktrans %}
+        </div>
+        <div class="art-references">{{ article.references }}</div>
+    </div>
+    {% endif %}
+
+    <!-- How to cite -->
+    <div class="art-section">
+        <h3 class="art-section-heading">How to Cite</h3>
+        <div class="p-3" style="background:#f9fafb; border-radius:6px; font-family:monospace; font-size:0.9rem; color:#4b5563;">
+            {{ article.authors }}. ({{ article.journal.year_category.year }}). {{ article.title }}. 
+            <em>Surxondaryo: Ilm va Tafakkur</em>, {{ article.journal.source_number }}, {{ article.pages|default:"" }}. 
+            {% if article.doi %}<a href="{{ article.get_absolute_url }}" style="color:#b48600;">{{ article.doi }}</a>{% else %}<a href="{{ request.build_absolute_uri }}" style="color:#b48600;">https://doi.org/10.37547/surxon-{{ article.journal.year_category.year|default:"0000" }}-{{ article.journal.source_number|default:"0" }}-{{ article.id|default:"0" }}</a>{% endif %}
+        </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="art-stats">
+        <div class="art-stat-item">
+            <span class="art-stat-value">{{ article.views }}</span>
+            <span class="art-stat-label">{% blocktrans %}Ko'rishlar{% endblocktrans %}</span>
+        </div>
+        <div class="art-stat-item">
+            <span class="art-stat-value">{{ article.created_at|date:"Y" }}</span>
+            <span class="art-stat-label">{% blocktrans %}Nashr yili{% endblocktrans %}</span>
+        </div>
+        {% if article.pages %}
+        <div class="art-stat-item">
+            <span class="art-stat-value">{{ article.pages }}</span>
+            <span class="art-stat-label">{% blocktrans %}Sahifalar{% endblocktrans %}</span>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Creative Commons -->
+    <div class="cc-box">
+        <span class="cc-badge">CC BY 4.0</span>
+        <span>{% blocktrans %}Ushbu maqola Creative Commons Attribution 4.0 International litsenziyasi ostida nashr etilgan.{% endblocktrans %}</span>
+    </div>
+</div>
+
+<script>
+function copyCite() {
+    const el = document.getElementById('cite-box');
+    const text = el.innerText.replace('Nusxalash','').trim();
+    navigator.clipboard.writeText(text).then(() => {
+        const btn = el.querySelector('.cite-copy-btn');
+        btn.innerHTML = '<i class="fa fa-check me-1"></i>Nusxalandi!';
+        setTimeout(() => btn.innerHTML = '<i class="fa fa-copy me-1"></i>Nusxalash', 2000);
+    }).catch(() => {
+        const range = document.createRange();
+        range.selectNodeContents(el);
+        window.getSelection().removeAllRanges();
+        window.getSelection().addRange(range);
+        document.execCommand('copy');
+    });
+}
+</script>
+{% endblock content %}

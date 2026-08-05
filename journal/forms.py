@@ -198,15 +198,8 @@ class JournalForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(JournalForm, self).__init__(*args, **kwargs)
-        if self.instance and self.instance.pk and self.instance.image:
-            self.fields['image'].required = False
-        else:
-            self.fields['image'].required = True
-
-        if self.instance and self.instance.pk and self.instance.file:
-            self.fields['file'].required = False
-        else:
-            self.fields['file'].required = True
+        self.fields['image'].required = False
+        self.fields['file'].required = False
 
 class YearCategoryForm(forms.ModelForm):
     class Meta:
