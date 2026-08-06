@@ -434,7 +434,7 @@
         <div class="art-section-heading">
             <i class="fa fa-align-left"></i>{% blocktrans %}Abstrakt{% endblocktrans %}
         </div>
-        <div class="art-abstract">{{ article.abstract }}</div>
+        <div class="art-abstract">{{ article.abstract|safe }}</div>
     </div>
     {% endif %}
 
@@ -468,7 +468,7 @@
         <div class="art-section-heading">
             <i class="fa fa-list-ol"></i>{% blocktrans %}Foydalanilgan adabiyotlar{% endblocktrans %}
         </div>
-        <div class="art-references">{{ article.references }}</div>
+        <div class="art-references">{{ article.references|safe }}</div>
     </div>
     {% endif %}
 

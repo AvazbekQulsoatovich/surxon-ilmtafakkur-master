@@ -1104,6 +1104,16 @@ class PostCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
         instance.author = self.request.user
         if not instance.slug:
             instance.slug = slugify(instance.title)
+        if not instance.slug:
+            import uuid
+            instance.slug = str(uuid.uuid4())[:8]
+        if instance.mediaImage:
+            import os
+            ext = os.path.splitext(instance.mediaImage.name)[1].lower()
+            if ext in ['.png', '.jpg', '.jpeg', '.gif', '.webp', '.bmp']:
+                instance.file_extension = 'image'
+            elif ext in ['.mp4', '.avi', '.mpeg', '.webm', '.mov']:
+                instance.file_extension = 'video'
         instance.save()
         self.object = instance
         from django.http import HttpResponseRedirect
@@ -1118,6 +1128,20 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     form_class = PostForm
     template_name = 'journal/post/update.html'
     pk_url_kwarg = 'id'
+
+    def form_valid(self, form):
+        instance = form.save(commit=False)
+        if instance.mediaImage:
+            import os
+            ext = os.path.splitext(instance.mediaImage.name)[1].lower()
+            if ext in ['.png', '.jpg', '.jpeg', '.gif', '.webp', '.bmp']:
+                instance.file_extension = 'image'
+            elif ext in ['.mp4', '.avi', '.mpeg', '.webm', '.mov']:
+                instance.file_extension = 'video'
+        instance.save()
+        self.object = instance
+        from django.http import HttpResponseRedirect
+        return HttpResponseRedirect(self.get_success_url())
 
     def test_func(self):
         return self.request.user.is_superuser or self.request.profile.is_admin

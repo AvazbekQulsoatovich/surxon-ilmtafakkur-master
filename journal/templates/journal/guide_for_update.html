@@ -1,43 +1,68 @@
-{% extends 'users/_profile.html' %}
+{% extends 'base.html' %}
 {% load i18n %}
-{% block title %}
-{% blocktrans %}Maqola haqida{% endblocktrans %}
-{% endblock title %}
 
+{% block title %}Maqola yuborishni tahrirlash{% endblock %}
 
 {% block content %}
-<div class="container shadow-lg rounded-4 mt-4 pt-2">
-    <h1 class="font-consolas mt-2 text-center">
-        <p class="text-end text-xxl-center fs-1 me-2">
-        <span class="me-4">
-            {% blocktrans %}Maqola yuborishni tahrirlash{% endblocktrans %}
-        </span>
-            <a href="{% url 'users:profile' %}" class="text-danger">
-                <i class="fa-solid fa-rectangle-xmark">
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-9">
 
-                </i>
-            </a>
-        </p>
-    </h1>
-
-    <div class="col-xxl mt-4 mx-4">
-        <form action="" method="post">
-            {% csrf_token %}
-            {{ form.media }}
-            {{ form.as_p }}
-
-            <div class="d-flex justify-content-between">
-                <button type="submit" class="btn btn-outline-success  mb-4">
-                    {% blocktrans %}Tahrirlash{% endblocktrans %}
-                </button>
-                <a href="{% url 'users:profile' %}" class="btn btn-outline-dark  mb-4">
-                    {% blocktrans %}Ortga{% endblocktrans %}
+            <!-- Header -->
+            <div class="d-flex align-items-center justify-content-between mb-4">
+                <div>
+                    <h2 class="section-title mb-1">
+                        <i class="fa fa-paper-plane me-2" style="color:var(--accent);"></i>
+                        Maqola yuborishni tahrirlash
+                    </h2>
+                    <p class="text-muted small mb-0">Maqola yuborish bo'yicha ko'rsatmalarni yangilash</p>
+                </div>
+                <a href="{% url 'journal:booking_article' %}" class="btn btn-outline-secondary btn-sm">
+                    <i class="fa fa-arrow-left me-1"></i> Ortga
                 </a>
             </div>
-        </form>
+
+            <!-- Form Card -->
+            <div style="background:#fff; border:1px solid var(--border); border-radius:12px; box-shadow:0 2px 12px rgba(0,0,0,0.06); overflow:hidden;">
+                <div style="background:#1e293b; padding:1rem 1.5rem; display:flex; align-items:center; gap:10px;">
+                    <i class="fa fa-shield-halved" style="color:#f8fafc;"></i>
+                    <strong style="color:#f8fafc; font-size:0.95rem;">Tahrir qilish paneli</strong>
+                </div>
+
+                <div class="p-4">
+                    <form method="post">
+                        {% csrf_token %}
+                        {{ form.media }}
+
+                        {% for field in form %}
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold" style="color:#374151; font-size:0.88rem; text-transform:uppercase; letter-spacing:0.5px;">
+                                {{ field.label }}
+                                {% if field.field.required %}<span style="color:#ef4444;">*</span>{% endif %}
+                            </label>
+                            {{ field }}
+                            {% if field.errors %}
+                            <div class="text-danger small mt-1">{{ field.errors|join:", " }}</div>
+                            {% endif %}
+                            {% if field.help_text %}
+                            <div class="text-muted small mt-1">{{ field.help_text }}</div>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+
+                        <div class="d-flex gap-3 mt-4 pt-3" style="border-top:1px solid var(--border);">
+                            <button type="submit" style="background:#1e293b; color:#fff; border:none; border-radius:8px; padding:10px 28px; font-weight:600; font-size:0.9rem; display:inline-flex; align-items:center; gap:8px; cursor:pointer; transition:all 0.2s;">
+                                <i class="fa fa-save"></i> Saqlash
+                            </button>
+                            <a href="{% url 'journal:booking_article' %}" style="background:#f1f5f9; color:#374151; border:none; border-radius:8px; padding:10px 22px; font-weight:600; font-size:0.9rem; display:inline-flex; align-items:center; gap:8px; text-decoration:none; transition:all 0.2s;">
+                                <i class="fa fa-times"></i> Bekor qilish
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
     </div>
 </div>
-{% endblock content %}
-
-
-
+{% endblock %}
