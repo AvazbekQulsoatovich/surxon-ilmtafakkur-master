@@ -318,7 +318,11 @@
                 </div>
                 <div class="article-card-footer">
                     <span class="article-meta">
-                        <i class="fa fa-clock"></i>{{ article.created_at|timesince }} {% blocktrans %}oldin{% endblocktrans %}
+                        {% if article.journal and article.journal.year_category %}
+                            <i class="fa fa-calendar"></i> {{ article.journal.year_category.year }}-yil, {{ article.journal.source_number }}-son
+                        {% else %}
+                            <i class="fa fa-clock"></i>{{ article.created_at|timesince }} {% blocktrans %}oldin{% endblocktrans %}
+                        {% endif %}
                         {% if article.pages %}&bull; <i class="fa fa-bookmark"></i>{{ article.pages }}-sahifa{% endif %}
                     </span>
                     <a href="{{ article.get_absolute_url }}" class="btn-read-more">
