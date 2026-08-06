@@ -664,8 +664,9 @@ def editorial_detail(request: HttpRequest, id):
 
 def article_detail(request: HttpRequest, slug, id):
     article = get_object_or_404(Article, slug=slug, id=id)
-    article.views += 1
-    article.save()
+    # Atomik yangilanish - race condition va 502 xatoliklarni oldini oladi
+    Article.objects.filter(pk=article.pk).update(views=models.F('views') + 1)
+    article.views += 1  # Lokal obyektni ham yangilash (template uchun)
     bands = article.bands.all()
     return render(request, 'journal/article/detail.html', {
         'article': article,
@@ -735,34 +736,31 @@ def article_create(request: HttpRequest):
         form = ArticleForm(data=request.POST, files=request.FILES)
         if form.is_valid():
             article = form.save(commit=False)
-            
+
+            # PDF dan matn olish (faqat content bo'sh bo'lsa va max 3 sahifa)
             if article.pdf_file and not article.content:
                 import PyPDF2
                 try:
                     pdf_reader = PyPDF2.PdfReader(article.pdf_file)
                     extracted_text = ""
-                    for page in pdf_reader.pages:
+                    for page in pdf_reader.pages[:3]:  # Faqat birinchi 3 sahifa
                         page_text = page.extract_text()
                         if page_text:
                             extracted_text += page_text + "\n"
-                    if extracted_text:
+                    if extracted_text.strip():
                         article.content = extracted_text.replace('\n', '<br>')
-                        if hasattr(article, 'content_uz') and not article.content_uz:
-                            article.content_uz = article.content
-                        if hasattr(article, 'content_ru') and not article.content_ru:
-                            article.content_ru = article.content
-                        if hasattr(article, 'content_en') and not article.content_en:
-                            article.content_en = article.content
                 except Exception:
                     pass
 
-            if not article.slug:
+            # Slug yaratish
+            if not article.slug and article.title:
                 article.slug = slugify(article.title)
             if not article.slug:
                 import uuid
-                article.slug = str(uuid.uuid4())[:8]
+                article.slug = str(uuid.uuid4())[:12]
             article.save()
 
+            # DOI yaratish (agar bo'sh bo'lsa)
             if not article.doi:
                 year_str = article.journal.year_category.year if article.journal and article.journal.year_category else "0000"
                 issue_str = article.journal.source_number if article.journal else "0"
@@ -829,34 +827,31 @@ def article_update(request: HttpRequest, slug, id):
         form = ArticleForm(data=request.POST, files=request.FILES, instance=article)
         if form.is_valid():
             article = form.save(commit=False)
-            
+
+            # PDF dan matn olish (faqat yangi PDF yuklansa va content bo'sh bo'lsa)
             if 'pdf_file' in request.FILES and not article.content:
                 import PyPDF2
                 try:
                     pdf_reader = PyPDF2.PdfReader(article.pdf_file)
                     extracted_text = ""
-                    for page in pdf_reader.pages:
+                    for page in pdf_reader.pages[:3]:  # Faqat birinchi 3 sahifa
                         page_text = page.extract_text()
                         if page_text:
                             extracted_text += page_text + "\n"
-                    if extracted_text:
+                    if extracted_text.strip():
                         article.content = extracted_text.replace('\n', '<br>')
-                        if hasattr(article, 'content_uz') and not article.content_uz:
-                            article.content_uz = article.content
-                        if hasattr(article, 'content_ru') and not article.content_ru:
-                            article.content_ru = article.content
-                        if hasattr(article, 'content_en') and not article.content_en:
-                            article.content_en = article.content
                 except Exception:
                     pass
 
-            if not article.slug:
+            # Slug yaratish
+            if not article.slug and article.title:
                 article.slug = slugify(article.title)
             if not article.slug:
                 import uuid
-                article.slug = str(uuid.uuid4())[:8]
+                article.slug = str(uuid.uuid4())[:12]
             article.save()
 
+            # DOI yaratish (agar bo'sh bo'lsa)
             if not article.doi:
                 year_str = article.journal.year_category.year if article.journal and article.journal.year_category else "0000"
                 issue_str = article.journal.source_number if article.journal else "0"
@@ -1081,12 +1076,12 @@ class PostListView(ListView):
 #             raise Http404("Post does not exist")
 
 def PostDetailView(request: HttpRequest, slug, id):
-    #     get_or_save_statistic(request)
     post = get_object_or_404(Post,
                              slug=slug,
                              id=id)
-    post.views += 1
-    post.save()
+    # Atomik yangilanish - race condition va 502 xatoliklarni oldini oladi
+    Post.objects.filter(pk=post.pk).update(views=models.F('views') + 1)
+    post.views += 1  # Lokal obyektni ham yangilash (template uchun)
 
     return render(request, 'journal/post/detail.html',
                   {'post': post})
