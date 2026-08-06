@@ -51,19 +51,20 @@ class UserCreateForm(forms.ModelForm):
         }
 
     def clean_password2(self):
+        from django.contrib.auth.password_validation import validate_password
+        password = self.cleaned_data.get("password")
         password2 = self.cleaned_data.get("password2")
-        if password2 != self.cleaned_data["password"]:
-            raise forms.ValidationError("Password not match!")
-
+        if password and password2 and password != password2:
+            raise forms.ValidationError("Parollar mos kelmadi!")
+        if password:
+            validate_password(password)
         return password2
 
     def clean_email(self):
-
-        email = self.cleaned_data['email']
-        if User.objects.filter(email=email).exists():
-            raise forms.ValidationError("Bunday e-mailli faydalanuvchi mavjud!")
-
-        return email
+        email = self.cleaned_data.get('email', '')
+        if User.objects.filter(email__iexact=email).exists():
+            raise forms.ValidationError("Bunday e-mailli foydalanuvchi mavjud!")
+        return email.lower()
 
 
 class ProfileCreateForm(forms.ModelForm):

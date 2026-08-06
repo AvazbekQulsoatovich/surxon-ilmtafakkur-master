@@ -66,20 +66,34 @@ class MultipleFileInput(forms.ClearableFileInput):
     allow_multiple_selected = True
 
 class MultipleFileField(forms.FileField):
+    ALLOWED_EXTENSIONS = ['.pdf', '.doc', '.docx']
+    MAX_SIZE_MB = 20
+
     def __init__(self, *args, **kwargs):
         kwargs.setdefault("widget", MultipleFileInput(attrs={'multiple': True, 'class': 'mb-4 mt-1 form-control'}))
         super().__init__(*args, **kwargs)
 
     def clean(self, data, initial=None):
+        import os
         single_file_clean = super().clean
         if isinstance(data, (list, tuple)):
             result = [single_file_clean(d, initial) for d in data]
         else:
             result = [single_file_clean(data, initial)]
-        # Filter out empty files
         result = [f for f in result if f]
         if not result and self.required:
             raise forms.ValidationError(self.error_messages['required'], code='required')
+        # Validate each file
+        for f in result:
+            ext = os.path.splitext(f.name)[1].lower()
+            if ext not in self.ALLOWED_EXTENSIONS:
+                raise forms.ValidationError(
+                    f"Faqat {', '.join(self.ALLOWED_EXTENSIONS)} formatdagi fayllar ruxsat etiladi."
+                )
+            if f.size > self.MAX_SIZE_MB * 1024 * 1024:
+                raise forms.ValidationError(
+                    f"Fayl hajmi {self.MAX_SIZE_MB}MB dan oshmasligi kerak."
+                )
         return result
 
 class ArticleForm(forms.ModelForm):

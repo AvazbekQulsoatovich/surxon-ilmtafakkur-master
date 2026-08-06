@@ -12,18 +12,21 @@ SECRET_KEY = os.getenv("SECRET_KEY", default="django-insecure-&&))$i7qfm)(m)x(9z
 DEBUG = os.getenv("DEBUG", "False") == "True"
 
 _hosts = os.getenv("ALLOWED_HOSTS", "")
-ALLOWED_HOSTS = _hosts.split(",") if _hosts else ["*"]
+ALLOWED_HOSTS = _hosts.split(",") if _hosts else ["surxon-ilmtafakkur.uz", "www.surxon-ilmtafakkur.uz", "95.182.119.84", "127.0.0.1", "localhost"]
 
 # ── Xavfsizlik sozlamalari ──────────────────────────────
 X_FRAME_OPTIONS = 'DENY'
 SECURE_CONTENT_TYPE_NOSNIFF = True
 SECURE_BROWSER_XSS_FILTER = True
 
-# HTTPS da ishlaganda quyidagilarni yoqing (.env orqali):
-# SECURE_SSL_REDIRECT = True
-# SESSION_COOKIE_SECURE = True
-# CSRF_COOKIE_SECURE = True
-# SECURE_HSTS_SECONDS = 31536000
+# HTTPS sozlamalari (production)
+if not DEBUG:
+    SECURE_SSL_REDIRECT = os.getenv("SECURE_SSL_REDIRECT", "False") == "True"
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_HSTS_SECONDS = 31536000
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
 
 
 INSTALLED_APPS = [
