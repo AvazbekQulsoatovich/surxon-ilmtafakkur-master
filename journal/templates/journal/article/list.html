@@ -209,7 +209,11 @@
                 <div class="article-card-footer">
                     <span class="article-meta">
                         <i class="fa fa-clock"></i>
-                        {{ article.created_at|timesince }} {% blocktrans %}oldin{% endblocktrans %}
+                        {% if article.journal and article.journal.year_category %}
+                            {{ article.journal.year_category.year }}-yil, {{ article.journal.source_number }}-son
+                        {% else %}
+                            {{ article.created_at|timesince }} {% blocktrans %}oldin{% endblocktrans %}
+                        {% endif %}
                     </span>
                     {% if article.authors %}
                     <span class="article-meta">
