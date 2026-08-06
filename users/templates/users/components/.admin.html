@@ -50,7 +50,7 @@
     </a>
 </li>
 <li class="fornow">
-    <a href="{% url 'journal:about_article_update' id=1 %}" class="nav-link" style="color: blue;">
+    <a href="{% if global_about %}{% url 'journal:about_article_update' id=global_about.id %}{% else %}#{% endif %}" class="nav-link" style="color: blue;">
         <i class="fa-regular text-warning fa-plus fs-3"></i>
         {% get_current_language as LANGUAGE_CODE %}
         {% if LANGUAGE_CODE == "uz" %}
@@ -63,7 +63,7 @@
     </a>
 </li>
 <li class="fornow">
-    <a href="{% url 'journal:sending_article_update' id=1 %}" class="nav-link" style="color: blue;">
+    <a href="{% if global_sending %}{% url 'journal:sending_article_update' id=global_sending.id %}{% else %}#{% endif %}" class="nav-link" style="color: blue;">
         <i class="fa-regular text-warning fa-plus fs-3"></i>
         {% get_current_language as LANGUAGE_CODE %}
         {% if LANGUAGE_CODE == "uz" %}

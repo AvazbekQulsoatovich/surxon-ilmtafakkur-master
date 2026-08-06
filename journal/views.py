@@ -225,6 +225,8 @@ def save_contact(request: HttpRequest):
 
 @login_required
 def message_list(request: HttpRequest):
+    if not _is_admin(request):
+        return HttpResponseForbidden()
     messages = Contact.objects.all().order_by('-created_at').select_related('sender', 'sender__profile')
     messages.update(is_read=True)
     messages_count = messages.count()
@@ -345,7 +347,7 @@ def article_list(request: HttpRequest):
     category_slug = request.GET.get('category', '')
     q = request.GET.get('q', '').strip()
 
-    qs = Article.objects.all()
+    qs = Article.objects.select_related('category', 'journal', 'journal__year_category').all()
     active_category = None
     active_journal = None
     active_year = None
@@ -1282,6 +1284,8 @@ from django.views.decorators.http import require_POST
 @login_required
 @require_POST
 def api_create_year(request):
+    if not _is_admin(request):
+        return JsonResponse({'success': False, 'error': 'Forbidden'}, status=403)
     try:
         data = json.loads(request.body)
         year_val = int(data.get('year'))
@@ -1293,6 +1297,8 @@ def api_create_year(request):
 @login_required
 @require_POST
 def api_create_journal(request):
+    if not _is_admin(request):
+        return JsonResponse({'success': False, 'error': 'Forbidden'}, status=403)
     try:
         data = json.loads(request.body)
         year_id = int(data.get('year_id'))
