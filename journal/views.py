@@ -756,6 +756,9 @@ def article_create(request: HttpRequest):
 
             if not article.slug:
                 article.slug = slugify(article.title)
+            if not article.slug:
+                import uuid
+                article.slug = str(uuid.uuid4())[:8]
             article.save()
 
             if not article.doi:
@@ -847,6 +850,9 @@ def article_update(request: HttpRequest, slug, id):
 
             if not article.slug:
                 article.slug = slugify(article.title)
+            if not article.slug:
+                import uuid
+                article.slug = str(uuid.uuid4())[:8]
             article.save()
 
             if not article.doi:
