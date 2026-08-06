@@ -208,7 +208,7 @@
                 <strong>DOI:</strong> <a href="{{ request.build_absolute_uri }}" style="color:#0ea5e9;text-decoration:underline;">https://doi.org/10.37547/surxon.v{{ journal.year_category.year|default:"0000" }}.i{{ journal.source_number|default:"0" }}</a>
             </div>
             <div class="ojs-meta-row">
-                <strong>Nashr qilingan:</strong> {{ journal.created_at|date:"Y-m-d" }}
+                <strong>Nashr qilingan:</strong> {{ journal.year_category.year }}-yil, {{ journal.source_number }}-son
             </div>
             
             {% if journal.file %}
