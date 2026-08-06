@@ -383,7 +383,13 @@
         <div class="art-info-items">
             <div class="art-info-item">
                 <span class="art-info-label"><i class="fa fa-calendar me-1"></i>{% blocktrans %}Nashr qilingan sana{% endblocktrans %}</span>
-                <span class="art-info-value">{{ article.created_at|date:"d F Y" }}</span>
+                <span class="art-info-value">
+                    {% if article.journal and article.journal.year_category %}
+                        {{ article.journal.year_category.year }}-yil, {{ article.journal.source_number }}-son
+                    {% else %}
+                        {{ article.created_at|date:"d F Y" }}
+                    {% endif %}
+                </span>
             </div>
             {% if article.pages %}
             <div class="art-info-item">
@@ -458,8 +464,34 @@
         <div class="art-section-heading">
             <i class="fa fa-book-open-reader"></i>{% blocktrans %}Maqola matni{% endblocktrans %}
         </div>
-        <div class="art-content">{{ article.content|safe }}</div>
+        <div class="art-content" id="artContentBody" style="max-height:350px;overflow:hidden;position:relative;">
+            {{ article.content|safe }}
+        </div>
+        <div id="artContentFade" style="position:relative;margin-top:-60px;height:60px;background:linear-gradient(to bottom,rgba(255,255,255,0),rgba(255,255,255,1));"></div>
+        <div class="text-center mt-2" id="artReadMoreWrap">
+            <button onclick="expandContent()" class="btn btn-sm" style="background:#c8a84b;color:#fff;font-weight:600;border:none;padding:6px 24px;border-radius:20px;">
+                <i class="fa fa-chevron-down me-1"></i>{% blocktrans %}To'liq o'qish{% endblocktrans %}
+            </button>
+        </div>
     </div>
+    <script>
+    function expandContent() {
+        document.getElementById('artContentBody').style.maxHeight = 'none';
+        document.getElementById('artContentFade').style.display = 'none';
+        document.getElementById('artReadMoreWrap').style.display = 'none';
+    }
+    // Agar matn qisqa bo'lsa tugmani yashirish
+    window.addEventListener('load', function() {
+        var body = document.getElementById('artContentBody');
+        var fade = document.getElementById('artContentFade');
+        var wrap = document.getElementById('artReadMoreWrap');
+        if (body && body.scrollHeight <= 360) {
+            body.style.maxHeight = 'none';
+            if (fade) fade.style.display = 'none';
+            if (wrap) wrap.style.display = 'none';
+        }
+    });
+    </script>
     {% endif %}
 
     <!-- References -->
@@ -489,7 +521,13 @@
             <span class="art-stat-label">{% blocktrans %}Ko'rishlar{% endblocktrans %}</span>
         </div>
         <div class="art-stat-item">
-            <span class="art-stat-value">{{ article.created_at|date:"Y" }}</span>
+            <span class="art-stat-value">
+                {% if article.journal and article.journal.year_category %}
+                    {{ article.journal.year_category.year }}
+                {% else %}
+                    {{ article.created_at|date:"Y" }}
+                {% endif %}
+            </span>
             <span class="art-stat-label">{% blocktrans %}Nashr yili{% endblocktrans %}</span>
         </div>
         {% if article.pages %}
