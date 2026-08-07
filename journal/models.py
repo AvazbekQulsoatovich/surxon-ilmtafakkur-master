@@ -113,10 +113,12 @@ class Article(BaseModel):
     is_archived  = models.BooleanField(default=False)
     ai_summary   = models.TextField(blank=True, null=True)
     published_date = models.DateField(blank=True, null=True, verbose_name="Nashr qilingan sana")
+    start_page = models.IntegerField(default=0, editable=False)
 
     class Meta:
-        ordering = ['-created_at']
+        ordering = ['start_page', '-created_at']
         indexes = [
+            models.Index(fields=['start_page']),
             models.Index(fields=['-created_at'])
         ]
 
@@ -126,6 +128,17 @@ class Article(BaseModel):
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.title)
+            
+        if self.pages:
+            import re
+            match = re.search(r'\d+', str(self.pages))
+            if match:
+                self.start_page = int(match.group())
+            else:
+                self.start_page = 0
+        else:
+            self.start_page = 0
+            
         super().save(*args, **kwargs)
 
     @property
