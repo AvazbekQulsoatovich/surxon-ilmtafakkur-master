@@ -102,7 +102,7 @@ def year_delete(request: HttpRequest, id):
 
 def journal_detail(request: HttpRequest, id):
     journal = get_object_or_404(Journal, pk=id)
-    articles = journal.articles.select_related('category').order_by('pages', 'created_at')
+    articles = journal.articles.select_related('category').order_by('start_page', 'created_at')
     return render(request, 'journal/journal/detail.html', {
         'journal': journal,
         'articles': articles,
