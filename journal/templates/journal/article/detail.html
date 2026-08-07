@@ -192,8 +192,20 @@
 .art-references {
     font-size: 0.88rem;
     color: #4d4840;
-    line-height: 1.65;
-    white-space: pre-line;
+    line-height: 1.6;
+}
+.art-references p {
+    margin-bottom: 0.4rem;
+}
+.art-references p:last-child {
+    margin-bottom: 0;
+}
+.art-references ul, .art-references ol {
+    margin-bottom: 0.5rem;
+    padding-left: 1.5rem;
+}
+.art-references li {
+    margin-bottom: 0.25rem;
 }
 .art-content {
     font-size: 1.05rem;
@@ -437,7 +449,12 @@
         </div>
         {% if article.pdf_file %}
         <a href="{{ article.pdf_file.url }}" target="_blank" class="btn-download-pdf">
-            <i class="fa fa-file-arrow-down"></i>{% blocktrans %}PDF Yuklab olish{% endblocktrans %}
+            <i class="fa fa-file-arrow-down"></i>
+            {% if article.is_word_file %}
+                {% blocktrans %}DOC Yuklab olish{% endblocktrans %}
+            {% else %}
+                {% blocktrans %}PDF Yuklab olish{% endblocktrans %}
+            {% endif %}
         </a>
         {% endif %}
     </div>
@@ -466,8 +483,8 @@
     </div>
     {% endif %}
 
-    <!-- Content -->
-    {% if article.content %}
+    <!-- Content: faqat PDF yo'q bo'lganda va content mavjud bo'lganda ko'rsat -->
+    {% if article.content and not article.pdf_file %}
     <div class="art-section">
         <div class="art-section-heading">
             <i class="fa fa-book-open-reader"></i>{% blocktrans %}Maqola matni{% endblocktrans %}
@@ -500,6 +517,46 @@
         }
     });
     </script>
+    {% endif %}
+
+    <!-- File Viewer: agar fayl mavjud bo'lsa uni ixcham tarzda ko'rsatamiz -->
+    {% if article.pdf_file %}
+    <div class="art-section">
+        <div class="art-section-heading">
+            {% if article.is_word_file %}
+                <i class="fa fa-file-word"></i>{% blocktrans %}Maqola DOC{% endblocktrans %}
+            {% else %}
+                <i class="fa fa-file-pdf"></i>{% blocktrans %}Maqola PDF{% endblocktrans %}
+            {% endif %}
+        </div>
+        
+        <div style="background: #fdfbf7; border: 1px dashed #d1d5db; border-radius: 8px; padding: 2rem 1.5rem; text-align: center; margin-top: 10px;">
+            {% if article.is_word_file %}
+                <i class="fa fa-file-word" style="font-size: 3rem; color: #2563eb; margin-bottom: 1rem; display: block;"></i>
+                <h4 style="font-size: 1.1rem; color: #374151; font-weight: 600; margin-bottom: 0.5rem;">{% blocktrans %}Maqolaning to'liq DOC nusxasi{% endblocktrans %}</h4>
+                <p style="font-size: 0.9rem; color: #6b7280; margin-bottom: 1.5rem;">{% blocktrans %}Maqolani o'qish uchun faylni oching yoki yuklab oling.{% endblocktrans %}</p>
+            {% else %}
+                <i class="fa fa-file-pdf" style="font-size: 3rem; color: #dc2626; margin-bottom: 1rem; display: block;"></i>
+                <h4 style="font-size: 1.1rem; color: #374151; font-weight: 600; margin-bottom: 0.5rem;">{% blocktrans %}Maqolaning to'liq PDF nusxasi{% endblocktrans %}</h4>
+                <p style="font-size: 0.9rem; color: #6b7280; margin-bottom: 1.5rem;">{% blocktrans %}Maqolani o'qish uchun PDF faylni oching yoki yuklab oling.{% endblocktrans %}</p>
+            {% endif %}
+            
+            <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+                {% if article.is_word_file %}
+                <a href="https://docs.google.com/viewer?url={{ request.scheme }}://{{ request.get_host }}{{ article.pdf_file.url }}" target="_blank" class="btn btn-primary" style="background: #1e3a8a; border: none; padding: 10px 24px; border-radius: 8px; font-weight: 600;">
+                    <i class="fa fa-book-open me-2"></i> {% blocktrans %}O'qish (Ochish){% endblocktrans %}
+                </a>
+                {% else %}
+                <a href="{{ article.pdf_file.url }}" target="_blank" class="btn btn-primary" style="background: #1e3a8a; border: none; padding: 10px 24px; border-radius: 8px; font-weight: 600;">
+                    <i class="fa fa-book-open me-2"></i> {% blocktrans %}O'qish (Ochish){% endblocktrans %}
+                </a>
+                {% endif %}
+                <a href="{{ article.pdf_file.url }}" download class="btn btn-outline-primary" style="border: 2px solid #1e3a8a; color: #1e3a8a; padding: 8px 24px; border-radius: 8px; font-weight: 600;">
+                    <i class="fa fa-download me-2"></i> {% blocktrans %}Yuklab olish{% endblocktrans %}
+                </a>
+            </div>
+        </div>
+    </div>
     {% endif %}
 
     <!-- References -->

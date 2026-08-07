@@ -195,14 +195,14 @@
                 <img src="{{ journal.image.url }}" alt="Muqova">
             {% else %}
                 <div class="ojs-issue-placeholder">
-                    <div class="ojs-issue-placeholder-title">TAMADDUN NURI</div>
+                    <div class="ojs-issue-placeholder-title">SURXON ILMTAFAKKUR</div>
                     <div class="ojs-issue-placeholder-year">{{ journal.year_category.year }}-yil</div>
                     <div style="font-size: 0.9rem;">{{ journal.source_number }}-son</div>
                 </div>
             {% endif %}
         </div>
         <div class="ojs-issue-meta">
-            <p>Ilmiy, ijtimoiy-falsafiy, madaniy-ma'rifiy,<br>adabiy-badiiy jurnal</p>
+            <p>Ilmiy tadqiqotlar va maqolalar jurnali</p>
             
             <div class="ojs-meta-row">
                 <strong>DOI:</strong> <a href="{{ request.build_absolute_uri }}" style="color:#0ea5e9;text-decoration:underline;">https://doi.org/10.37547/surxon.v{{ journal.year_category.year|default:"0000" }}.i{{ journal.source_number|default:"0" }}</a>

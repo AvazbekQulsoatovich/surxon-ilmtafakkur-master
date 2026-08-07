@@ -107,17 +107,11 @@
     </div>
     {% endif %}
 
-    {% if not search_query %}
+    {% if not search_query and not active_year and not active_journal %}
     <!-- Barcha maqolalar -->
     <h2 class="section-title mb-3" style="font-size:1.1rem;">
         <i class="fa fa-file-alt me-2" style="color:var(--accent);"></i>
-        {% if active_journal %}
-            {% if active_year %}{{ active_year.year }}-yil, {% endif %}{{ active_journal.source_number }}-soniga tegishli maqolalar
-        {% elif active_year %}
-            {{ active_year.year }}-yilga tegishli barcha maqolalar
-        {% else %}
-            {% trans "Barcha maqolalar" %}
-        {% endif %}
+        {% trans "Barcha maqolalar" %}
     </h2>
     {% endif %}
 
@@ -203,7 +197,11 @@
                         {{ article.title }}
                     </a>
                     <p class="article-card-text">
-                        {{ article.content|safe|truncatewords:35|striptags }}
+                        {% if article.abstract %}
+                        {{ article.abstract|striptags|truncatewords:35 }}
+                        {% elif article.content %}
+                        {{ article.content|striptags|truncatewords:35 }}
+                        {% endif %}
                     </p>
                 </div>
                 <div class="article-card-footer">

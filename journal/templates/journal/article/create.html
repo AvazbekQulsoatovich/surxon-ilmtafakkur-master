@@ -13,13 +13,45 @@
     </div>
     <div class="admin-form-body">
       <form method="post" enctype="multipart/form-data">{% csrf_token %}{{ form.media }}
+
         {% for field in form %}
-        <div class="admin-field">
-          <label class="admin-label">{{ field.label }}{% if field.field.required %} <span class="req">*</span>{% endif %}</label>
-          {% if field.errors %}<p class="admin-error">{{ field.errors|striptags }}</p>{% endif %}
-          {{ field }}
-        </div>
+          {% if field.name == 'journal' %}
+          <!-- Jurnal soni: tanlash + yangi qo'shish -->
+          <div class="admin-field">
+            <label class="admin-label">{{ field.label }}</label>
+            {% if field.errors %}<p class="admin-error">{{ field.errors|striptags }}</p>{% endif %}
+            {{ field }}
+
+            <!-- Yangi jurnal soni qo'shish paneli -->
+            <div id="addJournalPanel" style="margin-top:10px; padding:12px 16px; background:#f0f7ff; border:1px solid #bfdbfe; border-radius:8px;">
+              <p style="font-size:0.82rem; color:#1e40af; font-weight:600; margin-bottom:8px;">
+                <i class="fa fa-info-circle me-1"></i> Ro'yxatda kerakli son yo'qmi? Yangi jurnal soni qo'shing:
+              </p>
+              <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+                <input type="number" id="newJournalYearVal" placeholder="Yil (masalan: 2025)" min="2000" max="2100"
+                  style="padding:7px 10px; border:1px solid #93c5fd; border-radius:6px; font-size:0.88rem; width:150px;">
+                <input type="number" id="newJournalNumber" placeholder="Son (masalan: 3)" min="1" max="99"
+                  style="padding:7px 10px; border:1px solid #93c5fd; border-radius:6px; font-size:0.88rem; width:150px;">
+                <button type="button" id="btnAddJournal"
+                  style="padding:7px 14px; background:#047857; color:white; border:none; border-radius:6px; cursor:pointer; font-size:0.85rem; white-space:nowrap;">
+                  <i class="fa fa-plus me-1"></i> Qo'shish
+                </button>
+              </div>
+              <p style="font-size:0.78rem; color:#6b7280; margin-top:6px; margin-bottom:0;">
+                Avval yilni, keyin nechanchi son ekanini kiriting.
+              </p>
+            </div>
+          </div>
+
+          {% else %}
+          <div class="admin-field">
+            <label class="admin-label">{{ field.label }}{% if field.field.required %} <span class="req">*</span>{% endif %}</label>
+            {% if field.errors %}<p class="admin-error">{{ field.errors|striptags }}</p>{% endif %}
+            {{ field }}
+          </div>
+          {% endif %}
         {% endfor %}
+
         <div class="admin-form-actions">
           <button type="submit" class="admin-btn-save"><i class="fa fa-check me-2"></i>{% blocktrans %}Saqlash{% endblocktrans %}</button>
           <a href="{% url 'journal:dashboard' %}" class="admin-btn-cancel"><i class="fa fa-xmark me-2"></i>{% blocktrans %}Bekor qilish{% endblocktrans %}</a>
@@ -28,90 +60,82 @@
     </div>
   </div>
 </div>
+
 <script>
-document.addEventListener("DOMContentLoaded", function() {
-    const yearSelect = document.getElementById('id_year_filter');
+document.addEventListener('DOMContentLoaded', function() {
+    const csrf = document.querySelector('[name=csrfmiddlewaretoken]').value;
     const journalSelect = document.getElementById('id_journal');
-    
-    if (yearSelect && journalSelect) {
-        window.originalJournalOptions = Array.from(journalSelect.options);
-        
-        yearSelect.addEventListener('change', function() {
-            const selectedYearText = this.options[this.selectedIndex].text;
-            journalSelect.innerHTML = '';
-            
-            window.originalJournalOptions.forEach(opt => {
-                if (!selectedYearText || selectedYearText.includes('---------') || opt.value === '') {
-                    journalSelect.appendChild(opt.cloneNode(true));
-                } else if (opt.text.includes('(' + selectedYearText + '-')) {
-                    journalSelect.appendChild(opt.cloneNode(true));
+    const newJournalYearVal = document.getElementById('newJournalYearVal');
+    const newJournalNumber = document.getElementById('newJournalNumber');
+    const btnAddJournal = document.getElementById('btnAddJournal');
+
+    btnAddJournal.addEventListener('click', function() {
+        const yearVal = newJournalYearVal.value.trim();
+        const sonVal = newJournalNumber.value.trim();
+
+        if (!yearVal || isNaN(yearVal) || yearVal < 2000 || yearVal > 2100) {
+            alert('Iltimos, to\'g\'ri yilni kiriting (masalan: 2025)');
+            newJournalYearVal.focus();
+            return;
+        }
+        if (!sonVal || isNaN(sonVal) || sonVal < 1) {
+            alert('Iltimos, to\'g\'ri jurnal sonini kiriting (masalan: 1, 2, 3)');
+            newJournalNumber.focus();
+            return;
+        }
+
+        btnAddJournal.disabled = true;
+        btnAddJournal.innerHTML = '<i class="fa fa-spinner fa-spin me-1"></i> Qo\'shilmoqda...';
+
+        fetch('{% url "journal:api_create_journal" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrf
+            },
+            body: JSON.stringify({ year_val: yearVal, source_number: sonVal })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                // Dropdown'ga yangi option qo'sh
+                let existing = journalSelect.querySelector(`option[value="${data.id}"]`);
+                if (!existing) {
+                    const opt = document.createElement('option');
+                    opt.value = data.id;
+                    opt.text = data.text;
+                    journalSelect.appendChild(opt);
                 }
-            });
+                journalSelect.value = data.id;
+                newJournalNumber.value = '';
+
+                btnAddJournal.innerHTML = '<i class="fa fa-check me-1"></i> Qo\'shildi!';
+                btnAddJournal.style.background = '#1e3a8a';
+                setTimeout(() => {
+                    btnAddJournal.innerHTML = '<i class="fa fa-plus me-1"></i> Qo\'shish';
+                    btnAddJournal.style.background = '#047857';
+                    btnAddJournal.disabled = false;
+                }, 2000);
+            } else {
+                alert('Xatolik: ' + (data.error || 'Noma\'lum xatolik'));
+                btnAddJournal.disabled = false;
+                btnAddJournal.innerHTML = '<i class="fa fa-plus me-1"></i> Qo\'shish';
+            }
+        })
+        .catch(() => {
+            alert('Server bilan aloqa xatosi');
+            btnAddJournal.disabled = false;
+            btnAddJournal.innerHTML = '<i class="fa fa-plus me-1"></i> Qo\'shish';
         });
-        
-        // Add Year button
-        const btnYearContainer = document.createElement('div');
-        btnYearContainer.className = 'mt-1 mb-2';
-        const btnYear = document.createElement('button');
-        btnYear.type = 'button';
-        btnYear.className = 'btn btn-sm btn-primary';
-        btnYear.style.cssText = 'padding: 4px 8px; font-size: 12px; background: #1e3a8a; color: white; border-radius: 4px; cursor: pointer; border: none;';
-        btnYear.innerHTML = '+ Yangi yil qo\'shish';
-        
-        btnYear.onclick = function() {
-            const year = prompt("Yangi yilni kiriting (masalan, 2025):");
-            if (year && !isNaN(year)) {
-                fetch('{% url "journal:api_create_year" %}', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value },
-                    body: JSON.stringify({year: year})
-                }).then(res => res.json()).then(data => {
-                    if(data.success) {
-                        const opt = document.createElement('option');
-                        opt.value = data.id; opt.text = data.text;
-                        yearSelect.appendChild(opt);
-                        yearSelect.value = data.id;
-                        yearSelect.dispatchEvent(new Event('change'));
-                    } else { alert("Xatolik: " + data.error); }
-                });
-            }
-        };
-        btnYearContainer.appendChild(btnYear);
-        yearSelect.parentNode.insertBefore(btnYearContainer, yearSelect.nextSibling);
-        
-        // Add Journal button
-        const btnJContainer = document.createElement('div');
-        btnJContainer.className = 'mt-1 mb-2';
-        const btnJ = document.createElement('button');
-        btnJ.type = 'button';
-        btnJ.style.cssText = 'padding: 4px 8px; font-size: 12px; background: #047857; color: white; border-radius: 4px; cursor: pointer; border: none;';
-        btnJ.innerHTML = '+ Yangi jurnal sonini qo\'shish';
-        
-        btnJ.onclick = function() {
-            if(!yearSelect || !yearSelect.value) {
-                alert("Iltimos, avval tepadagi ro'yxatdan Yilni tanlang yoki yangi yarating!");
-                return;
-            }
-            const source_number = prompt(yearSelect.options[yearSelect.selectedIndex].text + " yili uchun nechanchi son qo'shilsin? (Faqat son kiriting):");
-            if (source_number && !isNaN(source_number)) {
-                fetch('{% url "journal:api_create_journal" %}', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value },
-                    body: JSON.stringify({ year_id: yearSelect.value, source_number: source_number })
-                }).then(res => res.json()).then(data => {
-                    if(data.success) {
-                        const opt = document.createElement('option');
-                        opt.value = data.id; opt.text = data.text;
-                        journalSelect.appendChild(opt);
-                        window.originalJournalOptions.push(opt.cloneNode(true));
-                        journalSelect.value = data.id;
-                    } else { alert("Xatolik: " + data.error); }
-                });
-            }
-        };
-        btnJContainer.appendChild(btnJ);
-        journalSelect.parentNode.insertBefore(btnJContainer, journalSelect.nextSibling);
-    }
+    });
+
+    // Enter bilan ham yuborish
+    newJournalNumber.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            btnAddJournal.click();
+        }
+    });
 });
 </script>
 {% endblock %}

@@ -112,6 +112,7 @@ class Article(BaseModel):
     )
     is_archived  = models.BooleanField(default=False)
     ai_summary   = models.TextField(blank=True, null=True)
+    published_date = models.DateField(blank=True, null=True, verbose_name="Nashr qilingan sana")
 
     class Meta:
         ordering = ['-created_at']
@@ -126,6 +127,13 @@ class Article(BaseModel):
         if not self.slug:
             self.slug = slugify(self.title)
         super().save(*args, **kwargs)
+
+    @property
+    def is_word_file(self):
+        if self.pdf_file:
+            name = self.pdf_file.name.lower()
+            return name.endswith('.doc') or name.endswith('.docx')
+        return False
 
     def get_absolute_url(self):
         return reverse('journal:article_detail',

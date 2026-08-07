@@ -13,13 +13,45 @@
     </div>
     <div class="admin-form-body">
       <form method="post" enctype="multipart/form-data">{% csrf_token %}
-        {% for field in form %}
+
+        <!-- Rasm -->
         <div class="admin-field">
-          <label class="admin-label">{{ field.label }}{% if field.field.required %} <span class="req">*</span>{% endif %}</label>
-          {% if field.errors %}<p class="admin-error">{{ field.errors|striptags }}</p>{% endif %}
-          {{ field }}
+          <label class="admin-label">Jurnal muqovasi (rasm)</label>
+          {{ form.image }}
         </div>
-        {% endfor %}
+
+        <!-- PDF -->
+        <div class="admin-field">
+          <label class="admin-label">Jurnal to'liq PDF fayli</label>
+          {{ form.file }}
+        </div>
+
+        <!-- Yil: tanlash + qo'lda kiritish -->
+        <div class="admin-field">
+          <label class="admin-label">Jurnal yili <span class="req">*</span></label>
+          {% if form.year_category.errors %}<p class="admin-error">{{ form.year_category.errors|striptags }}</p>{% endif %}
+
+          <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+            {{ form.year_category }}
+            <span style="color:#888; font-size:0.9rem;">yoki</span>
+            <div style="display:flex; gap:6px; align-items:center;">
+              <input type="number" id="newYearInput" placeholder="Masalan: 2025" min="2000" max="2100"
+                style="padding:8px 12px; border:1px solid #d1d5db; border-radius:6px; font-size:0.9rem; width:140px;">
+              <button type="button" id="btnAddYear"
+                style="padding:8px 14px; background:#1e3a8a; color:white; border:none; border-radius:6px; cursor:pointer; font-size:0.85rem; white-space:nowrap;">
+                <i class="fa fa-plus me-1"></i> Yangi yil
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Jurnal soni -->
+        <div class="admin-field">
+          <label class="admin-label">Jurnal soni <span class="req">*</span></label>
+          {% if form.source_number.errors %}<p class="admin-error">{{ form.source_number.errors|striptags }}</p>{% endif %}
+          {{ form.source_number }}
+        </div>
+
         <div class="admin-form-actions">
           <button type="submit" class="admin-btn-save"><i class="fa fa-check me-2"></i>{% blocktrans %}Saqlash{% endblocktrans %}</button>
           <a href="{% url 'journal:journal_list' %}" class="admin-btn-cancel"><i class="fa fa-eye me-2"></i>{% blocktrans %}Ko'rish{% endblocktrans %}</a>
@@ -29,4 +61,65 @@
     </div>
   </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const yearSelect = document.getElementById('id_year_category');
+    const newYearInput = document.getElementById('newYearInput');
+    const btnAddYear = document.getElementById('btnAddYear');
+    const csrf = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+    if (btnAddYear) {
+        btnAddYear.addEventListener('click', function() {
+            const yearVal = newYearInput.value.trim();
+            if (!yearVal || isNaN(yearVal) || yearVal < 2000 || yearVal > 2100) {
+                alert('Iltimos, to\'g\'ri yilni kiriting (masalan: 2025)');
+                return;
+            }
+            btnAddYear.disabled = true;
+            btnAddYear.innerHTML = '<i class="fa fa-spinner fa-spin me-1"></i> ...';
+
+            fetch('{% url "journal:api_create_year" %}', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrf },
+                body: JSON.stringify({ year: yearVal })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    let existing = yearSelect.querySelector(`option[value="${data.id}"]`);
+                    if (!existing) {
+                        const opt = document.createElement('option');
+                        opt.value = data.id;
+                        opt.text = data.text;
+                        yearSelect.appendChild(opt);
+                    }
+                    yearSelect.value = data.id;
+                    newYearInput.value = '';
+                    btnAddYear.innerHTML = '<i class="fa fa-check me-1"></i> Qo\'shildi!';
+                    btnAddYear.style.background = '#047857';
+                    setTimeout(() => {
+                        btnAddYear.innerHTML = '<i class="fa fa-plus me-1"></i> Yangi yil';
+                        btnAddYear.style.background = '#1e3a8a';
+                        btnAddYear.disabled = false;
+                    }, 2000);
+                } else {
+                    alert('Xatolik: ' + (data.error || ''));
+                    btnAddYear.disabled = false;
+                    btnAddYear.innerHTML = '<i class="fa fa-plus me-1"></i> Yangi yil';
+                }
+            })
+            .catch(() => {
+                alert('Server bilan aloqa yo\'q');
+                btnAddYear.disabled = false;
+                btnAddYear.innerHTML = '<i class="fa fa-plus me-1"></i> Yangi yil';
+            });
+        });
+
+        newYearInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') { e.preventDefault(); btnAddYear.click(); }
+        });
+    }
+});
+</script>
 {% endblock %}

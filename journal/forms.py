@@ -101,65 +101,62 @@ class ArticleForm(forms.ModelForm):
         required=False,
         label="Qo'shimcha fayllar (PDF, DOC, DOCX - bir nechta tanlash mumkin)"
     )
-    year = forms.ModelChoiceField(
-        queryset=YearCategory.objects.all(),
-        required=False,
-        label="Yil (Jurnallarni filtrlash uchun)",
-        widget=forms.Select(attrs={'class': 'mb-4 mt-1 form-control', 'id': 'id_year_filter'})
-    )
 
     class Meta:
         model = Article
         fields = (
-        'title', 'title_uz', 'authors', 'year', 'journal', 'doi', 'pages', 'abstract', 'keywords', 'references', 'content', 'content_uz', 'pdf_file', 'additional_pdfs')
+        'title', 'title_uz', 'authors', 'journal', 'published_date', 'doi', 'pages', 'abstract', 'keywords', 'references', 'content', 'content_uz', 'pdf_file', 'additional_pdfs')
+
+        labels = {
+            'title': 'Maqola sarlavhasi (asosiy)',
+            'title_uz': "Maqola sarlavhasi (o'zbek tilida, ixtiyoriy)",
+            'authors': 'Mualliflar',
+            'journal': 'Jurnal soni (qaysi songa tegishli)',
+            'published_date': 'Nashr qilingan sana (ixtiyoriy)',
+            'doi': 'DOI raqami yoki havolasi',
+            'pages': 'Sahifalar',
+            'abstract': 'Annotatsiya (Abstract)',
+            'keywords': "Kalit so'zlar",
+            'references': 'Foydalanilgan adabiyotlar',
+            'content': 'Maqola matni (ixtiyoriy, PDF bo\'lsa kerak emas)',
+            'content_uz': "Maqola matni (o'zbek tilida, ixtiyoriy)",
+            'pdf_file': 'Asosiy PDF fayl',
+        }
 
         widgets = {
             'title': forms.TextInput(attrs={
                 'class': 'mb-4 mt-1 form-control',
-                'placeholder': 'Sarlavha',
+                'placeholder': 'Masalan: Surxondaryo viloyatida...',
             }),
             'title_uz': forms.TextInput(attrs={
                 'class': 'mb-4 mt-1 form-control',
-                'placeholder': 'Sarlavha_uz',
+                'placeholder': 'Maqola sarlavhasi o\'zbek tilida (ixtiyoriy)',
             }),
             'journal': forms.Select(attrs={
                 'class': 'mb-4 mt-1 form-control',
             }),
+            'published_date': forms.DateInput(attrs={
+                'class': 'mb-4 mt-1 form-control',
+                'type': 'date'
+            }),
             'doi': forms.TextInput(attrs={
                 'class': 'mb-4 mt-1 form-control',
-                'placeholder': 'DOI havolasi yoki raqami',
+                'placeholder': 'Masalan: https://doi.org/10.37547/surxon-2024-1-15',
             }),
             'pages': forms.TextInput(attrs={
                 'class': 'mb-4 mt-1 form-control',
-                'placeholder': 'Sahifalar (masalan: 84-91)',
-            }),
-            'abstract': forms.Textarea(attrs={
-                'class': 'mb-4 mt-1 form-control',
-                'placeholder': 'Annotatsiya (Abstract)',
+                'placeholder': 'Masalan: 84–91 (bosh sahifa va oxirgi sahifa)',
             }),
             'keywords': forms.TextInput(attrs={
                 'class': 'mb-4 mt-1 form-control',
-                'placeholder': 'Kalit so\'zlar (vergul bilan ajrating)',
-            }),
-            'references': forms.Textarea(attrs={
-                'class': 'mb-4 mt-1 form-control',
-                'placeholder': 'Foydalanilgan adabiyotlar (References)',
-            }),
-            'content': forms.Textarea(attrs={
-                'class': 'mb-4 mt-1 form-control',
-                'placeholder': 'Kontent',
-            }),
-            'content_uz': forms.Textarea(attrs={
-                'class': 'mb-4 mt-1 form-control',
-                'placeholder': 'Content_uz',
+                'placeholder': "Kalit so'zlarni vergul bilan ajrating: tarix, arxiv, Surxondaryo",
             }),
             'authors': forms.TextInput(attrs={
                 'class': 'mb-4 mt-1 form-control',
-                'placeholder': 'Mualliflar',
+                'placeholder': 'Masalan: Karimov Jasur Olimovich, Toshmatov Sardor',
             }),
             'pdf_file': forms.FileInput(attrs={
                 'class': 'mb-4 mt-1 form-control',
-                'placeholder': 'Asosiy PDF fayl yuklang'
             })
         }
 
@@ -169,6 +166,8 @@ class ArticleForm(forms.ModelForm):
         for field in ['title_uz', 'content_uz', 'authors']:
             if field in self.fields:
                 self.fields[field].required = False
+        # Journal select uchun bo'sh tanlov
+        self.fields['journal'].empty_label = '--- Jurnal sonini tanlang ---'
 
 
 class PostForm(forms.ModelForm):
@@ -203,17 +202,36 @@ class JournalForm(forms.ModelForm):
         model = Journal
         fields = ('image', 'file', 'year_category', 'source_number')
 
+        labels = {
+            'image': 'Jurnal muqovasi (rasm)',
+            'file': 'Jurnal to\'liq PDF fayli',
+            'year_category': 'Jurnal yili (avval yil yarating)',
+            'source_number': 'Jurnal soni (masalan: 1, 2, 3...)',
+        }
+
         widgets = {
-            'image': forms.FileInput(attrs={'class': 'form-control'}),
-            'file': forms.FileInput(attrs={'class': 'form-control'}),
-            'year_category': forms.Select(attrs={'class': 'form-control'}),
-            'source_number': forms.NumberInput(attrs={'class': 'form-control'}),
+            'image': forms.FileInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Jurnal muqova rasmini yuklang (PNG, JPG)'
+            }),
+            'file': forms.FileInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Jurnal to\'liq PDF faylini yuklang'
+            }),
+            'year_category': forms.Select(attrs={
+                'class': 'form-control',
+            }),
+            'source_number': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Jurnal sonini kiriting (masalan: 1, 2, 3)'
+            }),
         }
 
     def __init__(self, *args, **kwargs):
         super(JournalForm, self).__init__(*args, **kwargs)
         self.fields['image'].required = False
         self.fields['file'].required = False
+        self.fields['year_category'].empty_label = '--- Yilni tanlang ---'
 
 class YearCategoryForm(forms.ModelForm):
     class Meta:

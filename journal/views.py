@@ -737,21 +737,6 @@ def article_create(request: HttpRequest):
         if form.is_valid():
             article = form.save(commit=False)
 
-            # PDF dan matn olish (faqat content bo'sh bo'lsa va max 3 sahifa)
-            if article.pdf_file and not article.content:
-                import PyPDF2
-                try:
-                    pdf_reader = PyPDF2.PdfReader(article.pdf_file)
-                    extracted_text = ""
-                    for page in pdf_reader.pages[:3]:  # Faqat birinchi 3 sahifa
-                        page_text = page.extract_text()
-                        if page_text:
-                            extracted_text += page_text + "\n"
-                    if extracted_text.strip():
-                        article.content = extracted_text.replace('\n', '<br>')
-                except Exception:
-                    pass
-
             # Slug yaratish
             if not article.slug and article.title:
                 article.slug = slugify(article.title)
@@ -781,7 +766,8 @@ def article_create(request: HttpRequest):
         form = ArticleForm(initial=initial)
 
     context = {
-        'form': form
+        'form': form,
+        'years': YearCategory.objects.filter(is_active=True).order_by('-year'),
     }
 
     return render(request,
@@ -828,21 +814,6 @@ def article_update(request: HttpRequest, slug, id):
         if form.is_valid():
             article = form.save(commit=False)
 
-            # PDF dan matn olish (faqat yangi PDF yuklansa va content bo'sh bo'lsa)
-            if 'pdf_file' in request.FILES and not article.content:
-                import PyPDF2
-                try:
-                    pdf_reader = PyPDF2.PdfReader(article.pdf_file)
-                    extracted_text = ""
-                    for page in pdf_reader.pages[:3]:  # Faqat birinchi 3 sahifa
-                        page_text = page.extract_text()
-                        if page_text:
-                            extracted_text += page_text + "\n"
-                    if extracted_text.strip():
-                        article.content = extracted_text.replace('\n', '<br>')
-                except Exception:
-                    pass
-
             # Slug yaratish
             if not article.slug and article.title:
                 article.slug = slugify(article.title)
@@ -870,7 +841,8 @@ def article_update(request: HttpRequest, slug, id):
 
     return render(request, 'journal/article/update.html',
                   {'form': form,
-                   'article': article})
+                   'article': article,
+                   'years': YearCategory.objects.filter(is_active=True).order_by('-year')})
 
 
 @login_required
@@ -1296,9 +1268,16 @@ def api_create_journal(request):
         return JsonResponse({'success': False, 'error': 'Forbidden'}, status=403)
     try:
         data = json.loads(request.body)
-        year_id = int(data.get('year_id'))
         source_number = int(data.get('source_number'))
-        year_obj = YearCategory.objects.get(id=year_id)
+        
+        if 'year_id' in data and data['year_id']:
+            year_obj = YearCategory.objects.get(id=int(data.get('year_id')))
+        elif 'year_val' in data and data['year_val']:
+            year_val = int(data.get('year_val'))
+            year_obj, _ = YearCategory.objects.get_or_create(year=year_val)
+        else:
+            return JsonResponse({'success': False, 'error': 'Yil kiritilmadi'})
+
         journal_obj, created = Journal.objects.get_or_create(year_category=year_obj, source_number=source_number)
         return JsonResponse({'success': True, 'id': journal_obj.id, 'text': str(journal_obj)})
     except Exception as e:

@@ -257,7 +257,9 @@
           <td style="color:var(--text-muted); width:36px;">{{ forloop.counter }}</td>
           <td><a href="{{ a.get_absolute_url }}" style="color:var(--primary); text-decoration:none; font-weight:600;">{{ a.title|truncatechars:55 }}</a></td>
           <td><i class="fa fa-eye" style="color:var(--accent); font-size:0.8rem;"></i> {{ a.views }}</td>
-          <td style="color:var(--text-muted); font-size:0.8rem; white-space:nowrap;">{{ a.created_at|date:"d.m.Y" }}</td>
+          <td style="color:var(--text-muted); font-size:0.8rem; white-space:nowrap;">
+            {% if a.published_date %}{{ a.published_date|date:"d.m.Y" }}{% else %}{{ a.created_at|date:"d.m.Y" }}{% endif %}
+          </td>
           <td style="white-space:nowrap;">
             <a href="{{ a.get_update_url }}" class="btn-action btn-edit" style="font-size:0.72rem; padding:4px 10px;"><i class="fa fa-pen"></i></a>
             <a href="{{ a.get_delete_url }}" class="btn-action btn-delete" style="font-size:0.72rem; padding:4px 10px; margin-left:4px;"><i class="fa fa-trash"></i></a>
