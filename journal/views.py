@@ -462,7 +462,7 @@ def article_ai_summary(request: HttpRequest, id):
         return JsonResponse({'error': str(exc)}, status=500)
 
 
-def article_download(request: HttpRequest, slug, id):
+def article_download(request: HttpRequest, id):
     import io
     import os
     from html.parser import HTMLParser
@@ -475,7 +475,7 @@ def article_download(request: HttpRequest, slug, id):
     from reportlab.pdfbase.ttfonts import TTFont
     from reportlab.lib.colors import HexColor
 
-    article = get_object_or_404(Article, slug=slug, id=id)
+    article = get_object_or_404(Article, id=id)
 
     # 1. Register Arial Font Family for Unicode support (Windows system font)
     windir = os.environ.get('WINDIR', 'C:\\Windows')
@@ -662,8 +662,8 @@ def editorial_detail(request: HttpRequest, id):
     return render(request, context={'editorial': editorial}, template_name='journal/editorial/detail.html')
 
 
-def article_detail(request: HttpRequest, slug, id):
-    article = get_object_or_404(Article, slug=slug, id=id)
+def article_detail(request: HttpRequest, id):
+    article = get_object_or_404(Article, id=id)
     # Atomik yangilanish - race condition va 502 xatoliklarni oldini oladi
     Article.objects.filter(pk=article.pk).update(views=models.F('views') + 1)
     article.views += 1  # Lokal obyektni ham yangilash (template uchun)
@@ -756,9 +756,7 @@ def article_create(request: HttpRequest):
                 from journal.models import ArticleFile
                 ArticleFile.objects.create(article=article, title=f.name, pdf_file=f)
 
-            return redirect('journal:article_detail',
-                            slug=article.slug,
-                            id=article.id)
+            return redirect('journal:article_detail', id=article.id)
     else:
         initial = {}
         if request.GET.get('journal'):
@@ -802,9 +800,8 @@ class editorial_create(LoginRequiredMixin, UserPassesTestMixin, CreateView):
 
 
 @login_required
-def article_update(request: HttpRequest, slug, id):
-    article = get_object_or_404(Article,
-                                slug=slug, id=id)
+def article_update(request: HttpRequest, id):
+    article = get_object_or_404(Article, id=id)
 
     if not _is_admin(request):
         return HttpResponseForbidden()
@@ -833,9 +830,7 @@ def article_update(request: HttpRequest, slug, id):
                 from journal.models import ArticleFile
                 ArticleFile.objects.create(article=article, title=f.name, pdf_file=f)
 
-            return redirect('journal:article_detail',
-                            slug=article.slug,
-                            id=article.id)
+            return redirect('journal:article_detail', id=article.id)
     else:
         form = ArticleForm(instance=article)
 
@@ -927,10 +922,8 @@ def sending_article_update(request: HttpRequest, id):
 
 
 @login_required
-def article_delete(request: HttpRequest, slug, id):
-    article = get_object_or_404(Article,
-                                slug=slug,
-                                id=id)
+def article_delete(request: HttpRequest, id):
+    article = get_object_or_404(Article, id=id)
     if not _is_admin(request):
         return HttpResponseForbidden()
 
@@ -1047,10 +1040,8 @@ class PostListView(ListView):
 #             # Handle case where no Post object is found
 #             raise Http404("Post does not exist")
 
-def PostDetailView(request: HttpRequest, slug, id):
-    post = get_object_or_404(Post,
-                             slug=slug,
-                             id=id)
+def PostDetailView(request: HttpRequest, id):
+    post = get_object_or_404(Post, id=id)
     # Atomik yangilanish - race condition va 502 xatoliklarni oldini oladi
     Post.objects.filter(pk=post.pk).update(views=models.F('views') + 1)
     post.views += 1  # Lokal obyektni ham yangilash (template uchun)
@@ -1127,8 +1118,8 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
 
 @login_required
-def PostDeleteView(request: HttpRequest, slug, id):
-    post = get_object_or_404(Post, slug=slug, id=id)
+def PostDeleteView(request: HttpRequest, id):
+    post = get_object_or_404(Post, id=id)
     if not _is_admin(request):
         return HttpResponseForbidden()
     if request.method == 'POST':

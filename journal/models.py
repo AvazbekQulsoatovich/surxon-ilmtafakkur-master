@@ -151,21 +151,18 @@ class Article(BaseModel):
     def get_absolute_url(self):
         return reverse('journal:article_detail',
                        kwargs={
-                           'slug': self.slug,
                            'id': self.pk
                        })
 
     def get_update_url(self):
         return reverse('journal:article_update',
                        kwargs={
-                           'slug': self.slug,
                            'id': self.pk
                        })
 
     def get_delete_url(self):
         return reverse('journal:article_delete',
                        kwargs={
-                           'slug': self.slug,
                            'id': self.pk
                        })
 
@@ -261,21 +258,18 @@ class Post(BaseModel):
     def get_absolute_url(self):
         return reverse('journal:post_detail',
                        kwargs={
-                           'slug': self.slug,
                            'id': self.pk
                        })
 
     def get_update_url(self):
         return reverse('journal:post_update',
                        kwargs={
-                           'slug': self.slug,
                            'id': self.pk
                        })
 
     def get_delete_url(self):
         return reverse('journal:post_delete',
                        kwargs={
-                           'slug': self.slug,
                            'id': self.pk
                        })
 

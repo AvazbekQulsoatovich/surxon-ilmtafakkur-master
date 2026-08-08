@@ -182,7 +182,7 @@ class PublicViewsTest(TestCase):
 
     def test_article_detail_accessible(self):
         url = reverse('journal:article_detail',
-                      kwargs={'slug': self.article.slug, 'id': self.article.id})
+                      kwargs={'id': self.article.id})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
@@ -190,7 +190,7 @@ class PublicViewsTest(TestCase):
         """Maqolani ochganda ko'rishlar soni +1 bo'lishi kerak."""
         old_views = self.article.views
         url = reverse('journal:article_detail',
-                      kwargs={'slug': self.article.slug, 'id': self.article.id})
+                      kwargs={'id': self.article.id})
         self.client.get(url)
         self.article.refresh_from_db()
         self.assertEqual(self.article.views, old_views + 1)
@@ -253,14 +253,14 @@ class PublicViewsTest(TestCase):
     def test_nonexistent_article_returns_404(self):
         """Mavjud bo'lmagan maqola 404 qaytarishi kerak."""
         url = reverse('journal:article_detail',
-                      kwargs={'slug': 'mavjud-emas', 'id': 99999})
+                      kwargs={'id': 99999})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 404)
 
     def test_article_download(self):
         """Maqolani yuklab olish PDF qaytarishi kerak."""
         url = reverse('journal:article_download',
-                      kwargs={'slug': self.article.slug, 'id': self.article.id})
+                      kwargs={'id': self.article.id})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'application/pdf')
@@ -325,13 +325,13 @@ class SuperuserViewsTest(TestCase):
 
     def test_article_update_get(self):
         url = reverse('journal:article_update',
-                      kwargs={'slug': self.article.slug, 'id': self.article.id})
+                      kwargs={'id': self.article.id})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
     def test_article_delete_get(self):
         url = reverse('journal:article_delete',
-                      kwargs={'slug': self.article.slug, 'id': self.article.id})
+                      kwargs={'id': self.article.id})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
@@ -339,7 +339,7 @@ class SuperuserViewsTest(TestCase):
         """Maqolani o'chirish ishlashi kerak."""
         article_id = self.article.id
         url = reverse('journal:article_delete',
-                      kwargs={'slug': self.article.slug, 'id': self.article.id})
+                      kwargs={'id': self.article.id})
         response = self.client.post(url)
         self.assertIn(response.status_code, [302, 301])
         self.assertFalse(Article.objects.filter(id=article_id).exists())
@@ -411,7 +411,7 @@ class RegularUserPermissionTest(TestCase):
 
     def test_article_delete_forbidden_for_regular_user(self):
         url = reverse('journal:article_delete',
-                      kwargs={'slug': self.article.slug, 'id': self.article.id})
+                      kwargs={'id': self.article.id})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 403)
 

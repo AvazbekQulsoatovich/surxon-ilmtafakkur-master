@@ -86,7 +86,7 @@ else:
 article = Article.objects.get(title='Test Maqola')
 
 # Update
-response = client.post(f'/uz/article/update/{article.slug}/{article.id}/', {
+response = client.post(f'/uz/article/update/{article.id}/', {
     'title': 'Test Maqola Updated',
     'authors': 'Test Muallif',
     'year': year.id,
@@ -112,7 +112,7 @@ else:
 # 5. Test Delete
 print("\n--- Delete Tests ---")
 # Article delete
-response = client.post(f'/uz/article/delete/{article.slug}/{article.id}/')
+response = client.post(f'/uz/article/delete/{article.id}/')
 if response.status_code in [200, 302]:
     print("Article Delete POST: OK", response.status_code)
 else:
