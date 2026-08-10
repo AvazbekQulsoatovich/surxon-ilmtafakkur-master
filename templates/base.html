@@ -24,6 +24,8 @@
 
     {% block style %}{% endblock style %}
 
+    {% block seo %}{% endblock %}
+
     <title>{% block title %}SURXONDARYO: ILM VA TAFAKKUR{% endblock title %} | Ilmiy jurnal</title>
 </head>
 <body class="{% if request.user.is_authenticated and request.user.is_superuser or request.user.is_authenticated and request.profile.is_admin %}has-admin-sidebar{% endif %}">

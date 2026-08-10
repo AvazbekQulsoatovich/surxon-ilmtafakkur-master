@@ -4,6 +4,36 @@
 
 {% block title %}{{ article.title }} | Surxondaryo Ilm va Tafakkur{% endblock %}
 
+{% block seo %}
+    <meta name="description" content="{{ article.abstract|striptags|truncatechars:160 }}">
+    <meta name="author" content="{{ article.authors }}">
+    <meta property="og:title" content="{{ article.title }}">
+    <meta property="og:description" content="{{ article.abstract|striptags|truncatechars:160 }}">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="{{ request.build_absolute_uri }}">
+    
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "ScholarlyArticle",
+      "headline": "{{ article.title|escapejs }}",
+      "author": {
+        "@type": "Person",
+        "name": "{{ article.authors|escapejs }}"
+      },
+      "datePublished": "{% if article.journal and article.journal.year_category %}{{ article.journal.year_category.year }}{% else %}{{ article.created_at|date:'Y-m-d' }}{% endif %}",
+      "description": "{{ article.abstract|striptags|escapejs|truncatechars:300 }}",
+      {% if article.doi %}
+      "sameAs": "{{ article.get_absolute_url }}",
+      {% endif %}
+      "publisher": {
+        "@type": "Organization",
+        "name": "Surxondaryo: Ilm va Tafakkur"
+      }
+    }
+    </script>
+{% endblock %}
+
 {% block style %}
 <style>
 /* ══ Article Hero ══ */
