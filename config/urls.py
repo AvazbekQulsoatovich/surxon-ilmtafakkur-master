@@ -13,6 +13,10 @@ from django.conf.urls.i18n import i18n_patterns
 
 from django.contrib.auth import views as auth_views
 
+from django.http import HttpResponse
+
+def google_verify(request):
+    return HttpResponse("google-site-verification: google180c3dd409d01067.html")
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -22,6 +26,7 @@ urlpatterns = [
     
     path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
     path('robots.txt', TemplateView.as_view(template_name="robots.txt", content_type="text/plain")),
+    path('google180c3dd409d01067.html', google_verify),
 
     path('password-change/', auth_views.PasswordChangeView.as_view(),
          name='password_change'),
